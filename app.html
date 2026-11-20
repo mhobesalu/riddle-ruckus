@@ -9,8 +9,8 @@
 <title>Riddle &amp; Ruckus</title>
 <style>
 :root{--ink:#2a1e3f;--paper:#fbf5ee;--card:#fff;--line:#e3d8cc;--muted:#7a6f86;--accent:#e8604c;--gold:#f2b84b;--good:#3b8f5a;--bad:#d2443a;
- --sel:#ffe2a8;--same:#fff1d6;--given:#8a7a9c;--cw:clamp(21px,7.4vw,34px)}
-@media (prefers-color-scheme:dark){:root{--ink:#efe8f6;--paper:#16111f;--card:#211a2e;--line:#3a3049;--muted:#a597b5;--sel:#6b4d1f;--same:#3a2f22;--given:#b3a4c6}}
+ --sel:#ffe2a8;--same:#fff1d6;--given:#8a7a9c;--word:#f6eee4;--cw:clamp(21px,7.4vw,34px)}
+@media (prefers-color-scheme:dark){:root{--ink:#efe8f6;--paper:#16111f;--card:#211a2e;--line:#3a3049;--muted:#a597b5;--sel:#6b4d1f;--same:#3a2f22;--given:#b3a4c6;--word:#2a2238}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -44,8 +44,8 @@ h1{font-size:24px;margin:4px 0 2px}h2{font-size:19px;margin:18px 0 8px}
 body.play main{padding-bottom:calc(env(safe-area-inset-bottom) + 200px)}
 .ptitle{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .ptitle b{font-size:17px}.ptitle span{color:var(--muted);font-size:14px}
-.board{display:flex;flex-wrap:wrap;gap:12px 10px;padding:14px 6px;justify-content:flex-start}
-.w{display:flex;gap:2px}
+.board{display:flex;flex-wrap:wrap;gap:14px calc(var(--cw)*.85);padding:14px 6px;justify-content:flex-start}
+.w{display:flex;gap:3px;background:var(--word);border-radius:8px;padding:2px 3px}
 .c{width:var(--cw);display:flex;flex-direction:column;align-items:center;border-radius:6px;padding:2px 0 1px;user-select:none}
 .c .g{height:calc(var(--cw)*1.05);width:100%;display:flex;align-items:flex-end;justify-content:center;font-weight:800;font-size:calc(var(--cw)*.72);
  border-bottom:2px solid var(--ink);line-height:1}
