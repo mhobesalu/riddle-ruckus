@@ -1,4 +1,4 @@
-# Builds the installable web version of Riddle & Ruckus into OUT (default /home/user/riddle-ruckus). Run: python3 build.py && python3 pwa.py
+# Builds the installable web version of Decoded: True Stories into OUT (default /home/user/riddle-ruckus). Run: python3 build.py && python3 pwa.py
 import os, hashlib, json
 from PIL import Image, ImageDraw, ImageFont
 D=os.path.dirname(os.path.abspath(__file__)); OUT=os.environ.get('OUT',os.path.dirname(os.path.abspath(__file__)))
@@ -10,7 +10,7 @@ head='''<link rel="manifest" href="manifest.webmanifest">
 '''
 h=h.replace('</title>','</title>\n'+head,1)
 open(os.path.join(OUT,'index.html'),'w',encoding='utf-8').write(h)
-json.dump({"name":"Riddle & Ruckus","short_name":"Riddle","start_url":"./","scope":"./","display":"standalone","background_color":"#fbf5ee","theme_color":"#2a1e3f",
+json.dump({"name":"Decoded: True Stories","short_name":"Decoded","start_url":"./","scope":"./","display":"standalone","background_color":"#fbf5ee","theme_color":"#2a1e3f",
  "icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]},open(os.path.join(OUT,'manifest.webmanifest'),'w'),indent=1)
 files=['./','index.html','manifest.webmanifest','icon-180.png','icon-192.png','icon-512.png']
 open(os.path.join(OUT,'sw.js'),'w').write(f'''const C='riddle-{ver}';const F={json.dumps(files)};

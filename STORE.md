@@ -1,4 +1,4 @@
-# Riddle & Ruckus: store launch kit
+# Decoded: True Stories: store launch kit (renamed from Riddle & Ruckus on 2026-11-20)
 
 ## IDs (already set in the code)
 | What | iOS | Android |
@@ -6,7 +6,7 @@
 | Bundle / package ID | `ee.silgrowth.riddleruckus` | `ee.silgrowth.riddleruckus` |
 | One-time unlock | Non-consumable `ee.silgrowth.riddleruckus.allstories` | One-time product `allstories` |
 | Price | $4.99 (Apple shows €5.99 in the euro zone), Family Sharing on, all 175 countries. Created in App Store Connect 2026-11-20 | €4.99 |
-| Name on the home screen | Riddle | Riddle & Ruckus |
+| Name on the home screen | Decoded | Decoded |
 | Seller | Sild Growth OÜ | Sild Growth OÜ (Play org account "TASA Plan") |
 
 ## Maria's to-dos
@@ -27,14 +27,14 @@
 - Age rating: no objectionable content. Stories mention historical events (arrests, a shipwreck) only in plain words → 4+ / Everyone. Medical/health info: none (the brain stories are general science, not advice).
 
 ## Listing text
-**Name:** Riddle & Ruckus: Cryptograms (28)
-**Subtitle (iOS, 30):** True stories in secret code (27)
+**Name:** Decoded: True Stories (21)
+**Subtitle (iOS, 30):** Learn by cracking codes (23)
 **Short description (Play, 80):** Crack coded true stories of founders, rebels and the brain. No ads.
 
 **Description:**
 Crack the code, learn the story.
 
-Riddle & Ruckus turns real history and real science into cryptogram puzzles. Every story is told in five coded chapters. Swap the letters back, and each solved chapter reveals the next part of the story, until you reach the life lesson at the end.
+Decoded turns real history and real science into cryptogram puzzles. Every story is told in five coded chapters. Swap the letters back, and each solved chapter reveals the next part of the story, until you reach the life lesson at the end.
 
 • Builders & inventors: Benjamin Franklin, the Wright brothers, Marie Curie, Walt Disney and more
 • Female founders: from Madam C. J. Walker to Sara Blakely

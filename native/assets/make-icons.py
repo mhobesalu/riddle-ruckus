@@ -1,4 +1,4 @@
-# Draws the Riddle & Ruckus icon and writes every iOS / Android icon and splash image.
+# Draws the Decoded icon and writes every iOS / Android icon and splash image.
 # Run from native/:  python3 assets/make-icons.py
 import os
 from PIL import Image, ImageDraw, ImageFont

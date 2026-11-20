@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#2a1e3f">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Riddle">
-<title>Riddle &amp; Ruckus</title>
+<meta name="apple-mobile-web-app-title" content="Decoded">
+<title>Decoded: True Stories</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -90,7 +90,7 @@ ul.ticks{padding-left:20px;margin:8px 0}
 <body>
 <header>
  <button class="hb" id="back" hidden aria-label="Back">‹ Back</button>
- <div class="brand"><svg viewBox="0 0 32 32"><rect x="3" y="5" width="26" height="22" rx="4" fill="#e8604c"/><path d="M9 13h4M9 19h4M19 13h4M19 19h4" stroke="#fbf5ee" stroke-width="2.4" stroke-linecap="round"/><text x="16" y="20" font-size="11" text-anchor="middle" fill="#fbf5ee" font-weight="800" font-family="Arial">?</text></svg><span id="ttl">Riddle &amp; Ruckus</span></div>
+ <div class="brand"><svg viewBox="0 0 32 32"><rect x="3" y="5" width="26" height="22" rx="4" fill="#e8604c"/><path d="M9 13h4M9 19h4M19 13h4M19 19h4" stroke="#fbf5ee" stroke-width="2.4" stroke-linecap="round"/><text x="16" y="20" font-size="11" text-anchor="middle" fill="#fbf5ee" font-weight="800" font-family="Arial">?</text></svg><span id="ttl">Decoded</span></div>
  <button class="hb" id="help">How to play</button>
 </header>
 <main id="app"></main>
@@ -336,9 +336,9 @@ const LEVELS={easy:['Easy','Lots of letters given. A quick, relaxed read.'],norm
 function levelPicker(){const lv=S.level||'normal';
  return `<div class="lvl" role="group" aria-label="Difficulty">${Object.keys(LEVELS).map(k=>`<button data-lvl="${k}" class="${k===lv?'on':''}" aria-pressed="${k===lv}">${LEVELS[k][0]}</button>`).join('')}</div><p class="sub lvlnote">${LEVELS[lv][1]}</p>`}
 function renderHome(){
- $('#back').hidden=true;$('#ttl').textContent='Riddle & Ruckus';window.scrollTo(0,0);
+ $('#back').hidden=true;$('#ttl').textContent='Decoded';window.scrollTo(0,0);
  const nu=nextUp();
- let h=`<h1>Riddle &amp; Ruckus</h1><p class="sub">True stories and real science, in secret code. Crack each line to learn what happened next.</p>`;
+ let h=`<h1>Decoded</h1><p class="sub">True stories and real science, in secret code. Crack each line to learn what happened next.</p>`;
  h+=levelPicker();
  if(nu){const started=doneCount(nu.st)>0;h+=`<button class="card next" data-go="#/p/${nu.st.id}/${nu.i}"><span class="big">${E(nu.st)}</span><span><span class="lbl">${started?'Next up':'Start here'}</span><br><b>${esc(T(nu.st))}</b><br><span class="sub">Chapter ${nu.i+1} of ${nu.st.ch.length}</span></span></button>`}
  else if(!S.unlocked)h+=`<div class="card"><b>You finished all the free stories!</b><p class="sub" style="margin:4px 0 10px">Unlock every story for one small price.</p><button class="btn" data-pay>See all stories</button></div>`;
