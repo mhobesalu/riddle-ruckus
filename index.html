@@ -91,59 +91,92 @@ ul.ticks{padding-left:20px;margin:8px 0}
 </header>
 <main id="app"></main>
 <script>
-// Original silly stories. Each story = 5 chapters; each chapter is one cryptogram.
-// All text written for this app. Keep chapters ~70-170 letters. Add new batches as stories2.js etc.
-const STORIES = [
-{id:'duck', emoji:'🦆', title:'The Duck Who Ran for Mayor', blurb:'A small town election gets very loud.', ch:[
- "Nobody in Puddleford expected Gerald the duck to run for mayor. Then again, nobody expected him to own a tie.",
- "His campaign promise was simple: more bread, fewer fences, and a pond in every kitchen.",
- "The current mayor called it a stunt. Gerald replied by quacking loudly through her entire speech.",
- "On election day, every child in town voted twice, and three of the geese voted four times.",
- "Gerald won by a landslide. His first act as mayor was to declare Tuesday a national nap day."]},
-{id:'socks', emoji:'🧦', title:'The Case of the Vanishing Socks', blurb:'Where do the odd socks really go?', ch:[
- "For eleven years, Dorothy lost exactly one sock every laundry day. This week, she decided to stay up and watch.",
- "At midnight, the dryer door creaked open, and a tiny figure in a woolly hat tiptoed out.",
- "He introduced himself as Fergus, chief knitter of a very cold village that lived behind the washing machine.",
- "The villagers unravelled the socks to make blankets. Winters behind a washing machine are famously brutal.",
- "Dorothy now leaves one spare sock on the dryer every Sunday. In return, she gets a thank you card shaped like a mitten."]},
-{id:'snail', emoji:'🐌', title:'The Slowest Race on Earth', blurb:'A marathon that takes all week.', ch:[
- "The annual snail marathon in Little Dribbling began on Monday morning. The commentators packed sandwiches for a week.",
- "By Wednesday, the favourite, a snail named Thunderbolt, had travelled almost the length of a carrot.",
- "On Thursday, a rival snail was caught riding on the back of a tortoise. The judges called it cheating, but also kind of genius.",
- "Thunderbolt stopped on Friday to admire a beautiful leaf. The crowd groaned so loudly that a scarecrow fell over.",
- "Nobody finished. The race was declared a draw, and everyone agreed it was the most exciting week of their lives."]},
-{id:'llama', emoji:'🦙', title:'A Llama in the Choir', blurb:'The choir needed a bass. They got Bernard.', ch:[
- "The church choir of Saint Bramble needed a new bass singer. Sadly, the only one who came to the audition was a llama.",
- "His name was Bernard, and he could hold a low note for nine minutes without taking a single breath.",
- "The sopranos complained that Bernard spat whenever they sang out of tune, which was, to be fair, quite often.",
- "Before the big winter concert, Bernard ate the sheet music, the conductor's baton, and half of a tuba.",
- "He sang the whole concert from memory. The audience wept, the tuba player did not, and Bernard got a standing ovation."]},
-{id:'nana', emoji:'🚀', title:'Nana Goes to the Moon', blurb:'Rejected by the space agency? Build your own.', ch:[
- "When the space agency rejected her application, eighty year old Nana Pearl built a rocket in her garden shed.",
- "She used three vacuum cleaners, a garden hose, a deck chair, and an alarming number of fireworks.",
- "The neighbours called the police. The officer stayed for tea and ended up helping her fix the fins.",
- "Lift off was delayed twice: once for rain, and once because Nana could not find her reading glasses.",
- "She never reached the moon, but she did land on the roof of the town hall, just in time for the raffle. She won a toaster."]},
-{id:'court', emoji:'🐈', title:'Whiskers versus Biscuit', blurb:'A cat takes a dog to court over a sunny spot.', ch:[
- "The courtroom fell silent as Whiskers the cat took the stand. She accused Biscuit the dog of stealing her favourite sunny spot.",
- "Biscuit's lawyer, a nervous hamster, argued that sunshine cannot be owned by anyone, least of all a cat.",
- "The jury of twelve goldfish forgot the question every few seconds, so the trial took a remarkably long time.",
- "The surprise witness was the vacuum cleaner. Nobody understood a word it said, but both animals hid under the sofa.",
- "The judge ruled that the sunny spot belongs to whoever falls asleep in it first. Both animals have been napping in court ever since."]},
-{id:'vending', emoji:'🥤', title:'The Moody Vending Machine', blurb:'Say please, or get prune juice.', ch:[
- "The vending machine on the third floor had feelings. If you did not say please, it gave you a warm can of prune juice.",
- "Derek from accounting kicked it once. For the next month, every bag of crisps he bought contained exactly one crisp.",
- "Soon the whole office was leaving it compliments on sticky notes. It began handing out free chocolate to the polite ones.",
- "When the manager tried to replace it with a newer model, the old machine refused to give anyone their coins back.",
- "After a long meeting, everyone agreed it could stay. It now has its own name badge, a pot plant, and a seat at the office party."]},
-{id:'spaghetti', emoji:'🍝', title:'The Spaghetti Bridge Contest', blurb:'Engineering, pasta, and a very bad accident.', ch:[
- "Every year, the engineering students of Pemberton build bridges out of dry spaghetti. This year, each bridge had to hold a pumpkin.",
- "Team one used a clever triangle design. Team two used glue, hope, and a lot of tape when the judges were not looking.",
- "On the morning of the contest, the caretaker accidentally put both bridges in a pot of boiling water.",
- "Rather than panic, the students added tomato sauce, invited the judges to lunch, and called it a structural tasting.",
- "The pumpkin was never tested, but everyone agreed it was the best contest in years. The caretaker got an honorary degree."]},
+// True stories and real science, each told in 5 coded chapters. Written for this app; facts only from well-documented sources.
+// Digits and punctuation are shown as-is (only letters are coded). Add new batches as stories2.js etc.
+const CATS = [
+ {id:'builders', title:'Builders & inventors', sub:'Real lives, real lessons.'},
+ {id:'brain', title:'Your brain & ADHD', sub:'Strange and useful things neuroscience has found.'},
 ];
-const FREE_IDS = ['duck','socks','snail'];
+const STORIES = [
+{id:'franklin', cat:'builders', emoji:'🪁', title:'Benjamin Franklin', blurb:'The runaway apprentice who retired at 42.', ch:[
+ "At 17, Benjamin Franklin ran away from his apprenticeship in Boston. He arrived in Philadelphia with one Dutch dollar and some copper coins.",
+ "He bought three big bread rolls and walked up Market Street eating one, with the other two under his arms. His future wife saw him and thought he looked ridiculous.",
+ "He built a printing business, published Poor Richard's Almanack for 25 years, and stepped back from daily business at 42.",
+ "With his free time, he flew a kite in a storm to show that lightning is electricity, then invented the lightning rod.",
+ "He never patented his inventions. He wrote that we should be glad to serve others by any invention of ours, freely and generously."],
+ lesson:'Buy back your time early, then spend it on work that matters to you.'},
+{id:'adhd', cat:'brain', emoji:'🧠', title:'Inside the ADHD brain', blurb:'Dopamine, hyperfocus and time blindness.', ch:[
+ "ADHD is one of the most inherited conditions in psychiatry. Twin studies estimate that around 70 to 80 percent of the risk comes from genes.",
+ "Research links ADHD to differences in dopamine signalling, the brain chemistry behind motivation, reward and getting started.",
+ "That is why boring tasks feel like pushing a boulder, while interesting ones can trigger hyperfocus that lasts for hours.",
+ "Psychologist Russell Barkley calls ADHD a disorder of time. The future feels less real, so deadlines only feel urgent when they are very close.",
+ "Exercise raises dopamine and norepinephrine. Studies show that even one short workout can sharpen attention in people with ADHD."],
+ lesson:'It is not a lack of willpower. Make tasks interesting, make time visible, and move your body.'},
+{id:'wright', cat:'builders', emoji:'✈️', title:'The Wright brothers', blurb:'Two bicycle mechanics beat the experts.', ch:[
+ "Wilbur and Orville Wright never received high school diplomas. They paid for their flying experiments with money from their bicycle shop in Ohio.",
+ "When the published data on wing lift turned out to be wrong, they built their own wind tunnel and tested about 200 wing shapes.",
+ "No company could sell them an engine that was light enough, so their shop mechanic, Charlie Taylor, built one in about six weeks.",
+ "On December 17, 1903, Orville flew for 12 seconds and 120 feet. Only five local people were there to watch.",
+ "Few newspapers believed them. It took almost five more years of quiet work before public flights in France made them world famous."],
+ lesson:'When the experts are wrong, test it yourself.'},
+{id:'curie', cat:'builders', emoji:'⚗️', title:'Marie Curie', blurb:'Two Nobel Prizes, two different sciences.', ch:[
+ "Marie Curie grew up in Warsaw, where women could not go to university. She studied at a secret school that moved from house to house.",
+ "In Paris she lived in a cold attic and sometimes piled every piece of clothing she owned on her bed to keep warm at night.",
+ "With her husband Pierre, she discovered two new elements. She named the first one polonium, after her homeland, Poland.",
+ "She was the first woman to win a Nobel Prize, and she is still the only person to win Nobel Prizes in two different sciences.",
+ "Her notebooks are still radioactive more than a century later. They are kept in lead lined boxes at the national library in Paris."],
+ lesson:'Hard conditions are not a stop sign. Keep going.'},
+{id:'brainfacts', cat:'brain', emoji:'🔬', title:'Strange brain discoveries', blurb:'Taxi drivers, an iron rod, and night cleaning.', ch:[
+ "Your brain is about 2 percent of your body weight, but it uses around 20 percent of your body's energy.",
+ "London taxi drivers must memorise thousands of streets. Brain scans showed that part of their hippocampus, a memory centre, grew larger.",
+ "In 1848 an iron rod shot through the head of railway worker Phineas Gage. He survived, but friends said he was no longer the same man.",
+ "After brain surgery, a patient known as H.M. could not form new memories, yet he still got better at new skills like drawing in a mirror.",
+ "While you sleep, your brain washes itself. A system of fluid flushes out waste much faster during sleep than when you are awake."],
+ lesson:'Your brain is physical, it changes with use, and it needs sleep to clean itself.'},
+{id:'edison', cat:'builders', emoji:'💡', title:'Thomas Edison', blurb:'An invention factory, and a fire at 67.', ch:[
+ "Thomas Edison had only a few months of school. His mother taught him at home, and he lost most of his hearing as a boy.",
+ "At Menlo Park he built one of the first industrial research labs, aiming for a small invention every ten days and a big one every six months.",
+ "To find a lasting light bulb filament, his team tested thousands of materials. Carbonised bamboo finally glowed for over a thousand hours.",
+ "In December 1914, a huge fire destroyed much of his factory in West Orange. He was 67 years old.",
+ "Watching it burn, he said there is great value in disaster, because all our mistakes are burned up. Within weeks, the factory was running again."],
+ lesson:'Make lots of attempts, and treat setbacks as a fresh start.'},
+{id:'plastic', cat:'brain', emoji:'🌱', title:'The brain that rewires itself', blurb:'Neuroplasticity, from juggling to braille.', ch:[
+ "For most of the 20th century, scientists believed the adult brain was fixed. Research since the 1990s has shown it keeps changing.",
+ "Adults who learned to juggle for three months showed visible growth in brain areas for motion. When they stopped, some of it faded.",
+ "Some children who had half of their brain removed to stop severe seizures grew up to walk, talk and live largely normal lives.",
+ "Blind people who read braille use their visual cortex to process touch. The brain hands unused space to a new job.",
+ "Every time you practise a skill, you strengthen the connections that support it. You can keep doing this for your whole life."],
+ lesson:'Practice literally changes your brain, at any age.'},
+{id:'walker', cat:'builders', emoji:'🧴', title:'Madam C. J. Walker', blurb:'From washerwoman to millionaire.', ch:[
+ "Sarah Breedlove was born in Louisiana in 1867, the first child in her family born free. She was an orphan by the age of seven.",
+ "For years she worked as a washerwoman, earning about a dollar and a half a day, while raising her daughter on her own.",
+ "Struggling with hair loss, she developed her own hair care products and sold them door to door as Madam C. J. Walker.",
+ "She trained thousands of women as sales agents, giving them income and independence that few other jobs offered at the time.",
+ "She is often called the first self made female millionaire in America, and she gave generously to schools and charities."],
+ lesson:'Solve your own problem first. Others probably have it too.'},
+{id:'disney', cat:'builders', emoji:'🐭', title:'Walt Disney', blurb:'He lost his star character, so he drew a new one.', ch:[
+ "Walt Disney's first animation studio in Kansas City went bankrupt. He moved to Hollywood with a suitcase and very little money.",
+ "In 1928 he lost the rights to his hit character, Oswald the Lucky Rabbit, and most of his animators, to his distributor.",
+ "So he created a new character: a mouse. Steamboat Willie, one of the first cartoons with synchronised sound, made Mickey a star.",
+ "Hollywood called his plan for a feature length cartoon Disney's Folly. Snow White went far over budget, to nearly 1.5 million dollars.",
+ "It became the most successful sound film of its time. Losing Oswald pushed him to own everything he created from then on."],
+ lesson:'Own what you build.'},
+{id:'shackleton', cat:'builders', emoji:'🧊', title:'Ernest Shackleton', blurb:'Trapped in Antarctic ice, and everyone came home.', ch:[
+ "In 1915, Ernest Shackleton's ship Endurance became trapped in Antarctic sea ice, far from any chance of rescue.",
+ "The ice slowly crushed the ship. The 28 men camped on drifting ice for months, then took lifeboats to Elephant Island.",
+ "Shackleton and five men sailed a small lifeboat about 800 miles across one of the stormiest oceans on Earth to South Georgia.",
+ "They landed on the wrong side of the island and crossed its icy mountains on foot, with screws from the boat in their boots for grip.",
+ "Every man of the Endurance crew survived. In 2022, the wreck was found 3,000 metres down, remarkably well preserved."],
+ lesson:'Morale is a leader\'s first job.'},
+{id:'jobs', cat:'builders', emoji:'🍎', title:'Steve Jobs', blurb:'Fired from his own company at 30.', ch:[
+ "After dropping out of college, Steve Jobs sat in on a calligraphy class for fun. Ten years later, it shaped the fonts of the first Mac.",
+ "In 1985, at the age of 30, he was pushed out of Apple, the company he had started with a friend.",
+ "He founded a new computer company called NeXT, and bought a small computer graphics group from Lucasfilm that became Pixar.",
+ "In 1995 Pixar released Toy Story, the first feature film made entirely with computer animation.",
+ "Apple then bought NeXT and brought him back. He later said that getting fired from Apple was the best thing that could have happened to him."],
+ lesson:'You can only connect the dots looking backwards, so follow your curiosity.'},
+];
+const FREE_IDS = ['franklin','adhd','wright'];
 
 (function(){
 const KEY='ciphertales-v1';
@@ -194,12 +227,13 @@ function nextUp(){
 function renderHome(){
  $('#back').hidden=true;$('#ttl').textContent='Riddle & Ruckus';window.scrollTo(0,0);
  const nu=nextUp();
- let h=`<h1>Riddle &amp; Ruckus</h1><p class="sub">Silly stories in secret code. Crack each line to read what happens next.</p>`;
+ let h=`<h1>Riddle &amp; Ruckus</h1><p class="sub">True stories and real science, in secret code. Crack each line to learn what happened next.</p>`;
  if(nu){const started=doneCount(nu.st)>0;h+=`<button class="card next" data-go="#/p/${nu.st.id}/${nu.i}"><span class="big">${nu.st.emoji}</span><span><span class="lbl">${started?'Next up':'Start here'}</span><br><b>${esc(nu.st.title)}</b><br><span class="sub">Chapter ${nu.i+1} of ${nu.st.ch.length}</span></span></button>`}
  else if(!S.unlocked)h+=`<div class="card"><b>You finished all the free stories!</b><p class="sub" style="margin:4px 0 10px">Unlock every story for one small price.</p><button class="btn" data-pay>See all stories</button></div>`;
- h+=`<h2>Stories</h2>`;
- for(const st of STORIES){const n=doneCount(st),lk=!canPlay(st.id);
+ for(const cat of CATS){h+=`<h2>${esc(cat.title)}</h2><p class="sub" style="margin-top:-4px">${esc(cat.sub)}</p>`;
+ for(const st of STORIES.filter(x=>x.cat===cat.id)){const n=doneCount(st),lk=!canPlay(st.id);
   h+=`<button class="card story" data-go="#/s/${st.id}"><span class="em">${st.emoji}</span><span><span class="t">${esc(st.title)}</span><br><span class="b">${esc(st.blurb)}</span><span class="dots">${st.ch.map((_,i)=>`<i class="${S.solved[pid(st.id,i)]?'on':''}"></i>`).join('')}</span></span>${lk?'<span class="lock">🔒</span>':(n===st.ch.length?'<span class="lock">✅</span>':'')}</button>`}
+ }
  h+=`<p class="sub" style="text-align:center;margin-top:14px">More stories are on the way.</p>`;
  h+=`<h2>More from us</h2><a class="card promo" href="https://mhobesalu.github.io/mischief-motive/" target="_blank" rel="noopener"><span class="em">🔎</span><span><b>Mischief &amp; Motive</b><br><span class="sub" style="margin:0">Logic grid puzzles about ridiculous crimes. Same makers, no ads.</span></span></a>`;
  if(!S.unlocked)h+=`<div style="text-align:center;margin-top:16px"><button class="btn ghost" data-pay>Unlock all stories</button></div>`;
@@ -215,7 +249,7 @@ function renderStory(id){
   else if(i===n)h+=`<button class="card chap todo" data-go="#/p/${id}/${i}"><span class="lbl">Chapter ${i+1} · next up</span><br><b>Tap to crack the code</b></button>`;
   else h+=`<div class="card chap locked"><span class="lbl" style="color:var(--muted)">Chapter ${i+1}</span><br>Solve the chapter before to read this one.</div>`;
  });
- if(n===st.ch.length){const nx=nextUp();h+=`<div class="card" style="text-align:center"><b>🎉 The end!</b><br>${nx?`<button class="btn" style="margin-top:10px" data-go="#/s/${nx.st.id}">Next story: ${esc(nx.st.title)}</button>`:(!S.unlocked?`<button class="btn" style="margin-top:10px" data-pay>Unlock more stories</button>`:'')}</div>`}
+ if(n===st.ch.length){const nx=nextUp();h+=`<div class="card" style="text-align:center"><b>🎉 The end!</b>${st.lesson?`<p class="reveal" style="text-align:left"><b>Lesson:</b> ${esc(st.lesson)}</p>`:'<br>'}${nx?`<button class="btn" style="margin-top:10px" data-go="#/s/${nx.st.id}">Next story: ${esc(nx.st.title)}</button>`:(!S.unlocked?`<button class="btn" style="margin-top:10px" data-pay>Unlock more stories</button>`:'')}</div>`}
  app.innerHTML=h;bind();
 }
 function bind(){
@@ -306,6 +340,7 @@ function win(){
  setTimeout(()=>{
   let h=`<div class="sheet"><h3>${last?'🎉 Story complete!':'✨ Cracked it!'}</h3><div class="reveal">`;
   h+=last?st.ch.map(t=>`<p>${esc(t)}</p>`).join(''):`<p>${esc(st.ch[i])}</p>`;
+  if(last&&st.lesson)h+=`<p><b>Lesson:</b> ${esc(st.lesson)}</p>`;
   h+=`</div><div class="row">`;
   if(!last)h+=`<button class="btn" data-go="#/p/${st.id}/${i+1}">Next chapter →</button><button class="btn ghost" data-go="#/s/${st.id}">Story so far</button>`;
   else{const nx=nextUp();h+=nx?`<button class="btn" data-go="#/p/${nx.st.id}/${nx.i}">Next story: ${esc(nx.st.title)}</button>`:(!S.unlocked?`<button class="btn" data-pay>Get more stories</button>`:'');h+=`<button class="btn ghost" data-go="#/">All stories</button>`}

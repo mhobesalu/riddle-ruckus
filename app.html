@@ -136,12 +136,13 @@ function nextUp(){
 function renderHome(){
  $('#back').hidden=true;$('#ttl').textContent='Riddle & Ruckus';window.scrollTo(0,0);
  const nu=nextUp();
- let h=`<h1>Riddle &amp; Ruckus</h1><p class="sub">Silly stories in secret code. Crack each line to read what happens next.</p>`;
+ let h=`<h1>Riddle &amp; Ruckus</h1><p class="sub">True stories and real science, in secret code. Crack each line to learn what happened next.</p>`;
  if(nu){const started=doneCount(nu.st)>0;h+=`<button class="card next" data-go="#/p/${nu.st.id}/${nu.i}"><span class="big">${nu.st.emoji}</span><span><span class="lbl">${started?'Next up':'Start here'}</span><br><b>${esc(nu.st.title)}</b><br><span class="sub">Chapter ${nu.i+1} of ${nu.st.ch.length}</span></span></button>`}
  else if(!S.unlocked)h+=`<div class="card"><b>You finished all the free stories!</b><p class="sub" style="margin:4px 0 10px">Unlock every story for one small price.</p><button class="btn" data-pay>See all stories</button></div>`;
- h+=`<h2>Stories</h2>`;
- for(const st of STORIES){const n=doneCount(st),lk=!canPlay(st.id);
+ for(const cat of CATS){h+=`<h2>${esc(cat.title)}</h2><p class="sub" style="margin-top:-4px">${esc(cat.sub)}</p>`;
+ for(const st of STORIES.filter(x=>x.cat===cat.id)){const n=doneCount(st),lk=!canPlay(st.id);
   h+=`<button class="card story" data-go="#/s/${st.id}"><span class="em">${st.emoji}</span><span><span class="t">${esc(st.title)}</span><br><span class="b">${esc(st.blurb)}</span><span class="dots">${st.ch.map((_,i)=>`<i class="${S.solved[pid(st.id,i)]?'on':''}"></i>`).join('')}</span></span>${lk?'<span class="lock">🔒</span>':(n===st.ch.length?'<span class="lock">✅</span>':'')}</button>`}
+ }
  h+=`<p class="sub" style="text-align:center;margin-top:14px">More stories are on the way.</p>`;
  h+=`<h2>More from us</h2><a class="card promo" href="https://mhobesalu.github.io/mischief-motive/" target="_blank" rel="noopener"><span class="em">🔎</span><span><b>Mischief &amp; Motive</b><br><span class="sub" style="margin:0">Logic grid puzzles about ridiculous crimes. Same makers, no ads.</span></span></a>`;
  if(!S.unlocked)h+=`<div style="text-align:center;margin-top:16px"><button class="btn ghost" data-pay>Unlock all stories</button></div>`;
@@ -157,7 +158,7 @@ function renderStory(id){
   else if(i===n)h+=`<button class="card chap todo" data-go="#/p/${id}/${i}"><span class="lbl">Chapter ${i+1} · next up</span><br><b>Tap to crack the code</b></button>`;
   else h+=`<div class="card chap locked"><span class="lbl" style="color:var(--muted)">Chapter ${i+1}</span><br>Solve the chapter before to read this one.</div>`;
  });
- if(n===st.ch.length){const nx=nextUp();h+=`<div class="card" style="text-align:center"><b>🎉 The end!</b><br>${nx?`<button class="btn" style="margin-top:10px" data-go="#/s/${nx.st.id}">Next story: ${esc(nx.st.title)}</button>`:(!S.unlocked?`<button class="btn" style="margin-top:10px" data-pay>Unlock more stories</button>`:'')}</div>`}
+ if(n===st.ch.length){const nx=nextUp();h+=`<div class="card" style="text-align:center"><b>🎉 The end!</b>${st.lesson?`<p class="reveal" style="text-align:left"><b>Lesson:</b> ${esc(st.lesson)}</p>`:'<br>'}${nx?`<button class="btn" style="margin-top:10px" data-go="#/s/${nx.st.id}">Next story: ${esc(nx.st.title)}</button>`:(!S.unlocked?`<button class="btn" style="margin-top:10px" data-pay>Unlock more stories</button>`:'')}</div>`}
  app.innerHTML=h;bind();
 }
 function bind(){
@@ -248,6 +249,7 @@ function win(){
  setTimeout(()=>{
   let h=`<div class="sheet"><h3>${last?'🎉 Story complete!':'✨ Cracked it!'}</h3><div class="reveal">`;
   h+=last?st.ch.map(t=>`<p>${esc(t)}</p>`).join(''):`<p>${esc(st.ch[i])}</p>`;
+  if(last&&st.lesson)h+=`<p><b>Lesson:</b> ${esc(st.lesson)}</p>`;
   h+=`</div><div class="row">`;
   if(!last)h+=`<button class="btn" data-go="#/p/${st.id}/${i+1}">Next chapter →</button><button class="btn ghost" data-go="#/s/${st.id}">Story so far</button>`;
   else{const nx=nextUp();h+=nx?`<button class="btn" data-go="#/p/${nx.st.id}/${nx.i}">Next story: ${esc(nx.st.title)}</button>`:(!S.unlocked?`<button class="btn" data-pay>Get more stories</button>`:'');h+=`<button class="btn ghost" data-go="#/">All stories</button>`}
