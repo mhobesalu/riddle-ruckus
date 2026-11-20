@@ -261,6 +261,27 @@ FREE_IDS.push('blakely','singing');
 const KEY='ciphertales-v1';
 let S; try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){S={}}
 S.solved=S.solved||{};S.g=S.g||{};S.hints=S.hints||{};S.unlocked=!!S.unlocked;
+// ---------- store: real one-time unlock in the apps, free demo on the website, test unlock elsewhere ----------
+const NATIVE=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
+const ANDROID=NATIVE?window.Capacitor.getPlatform()==='android':/Android/i.test(navigator.userAgent);
+const WEBSITE=!NATIVE&&/(^|\.)github\.io$|sildpartners\.com$/.test(location.hostname); // public free demo
+const TESTMODE=!NATIVE&&!WEBSITE; // prototype link: unlock button is free
+// Set these once the apps are live:
+const APP_STORE_URL='';
+const PLAY_URL='';
+const MM_URL='https://mhobesalu.github.io/mischief-motive/'; // Mischief & Motive (swap for store links when live)
+const STORE_NAME=ANDROID?'Google Play':'the App Store';
+const STORE_LINK=ANDROID?PLAY_URL:APP_STORE_URL;
+if(WEBSITE)S.unlocked=false;
+let priceText='';
+const shop={call:m=>window.Capacitor.nativePromise('Store',m,{}),
+ set(v){if(!!v!==S.unlocked){S.unlocked=!!v;save();if(!document.querySelector('.ov'))render()}},
+ async refresh(){if(!NATIVE)return;try{const r=await shop.call('isUnlocked');shop.set(r.unlocked)}catch(e){}
+  if(!priceText){try{const r=await shop.call('getProduct');priceText=r.price||''}catch(e){}}}};
+if(NATIVE){shop.refresh();document.addEventListener('visibilitychange',()=>{if(!document.hidden)shop.refresh()});
+ try{const St=window.Capacitor.registerPlugin('Store');St.addListener('entitlement',r=>shop.set(r.unlocked))}catch(e){}}
+function maybeAskReview(){if(!NATIVE)return;const n=Object.keys(S.solved).length;S.asks=S.asks||[];
+ for(const at of [5,20,60])if(n>=at&&!S.asks.includes(at)){S.asks.push(at);save();setTimeout(()=>shop.call('requestReview').catch(()=>{}),1500);break}}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const $=s=>document.querySelector(s), app=$('#app');
 const esc=t=>t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -317,7 +338,7 @@ function renderHome(){
   h+=`<button class="card story" data-go="#/s/${st.id}"><span class="em">${E(st)}</span><span><span class="t">${esc(T(st))}</span><br><span class="b">${esc(st.blurb)}</span><span class="dots">${st.ch.map((_,i)=>`<i class="${S.solved[pid(st.id,i)]?'on':''}"></i>`).join('')}</span></span>${lk?'<span class="lock">🔒</span>':(n===st.ch.length?'<span class="lock">✅</span>':'')}</button>`}
  }
  h+=`<p class="sub" style="text-align:center;margin-top:14px">More stories are on the way.</p>`;
- h+=`<h2>More from us</h2><a class="card promo" href="https://mhobesalu.github.io/mischief-motive/" target="_blank" rel="noopener"><span class="em">🔎</span><span><b>Mischief &amp; Motive</b><br><span class="sub" style="margin:0">Logic grid puzzles about ridiculous crimes. Same makers, no ads.</span></span></a>`;
+ h+=`<h2>More from us</h2><a class="card promo" href="${MM_URL}" target="_blank" rel="noopener"><span class="em">🔎</span><span><b>Mischief &amp; Motive</b><br><span class="sub" style="margin:0">Logic grid puzzles about ridiculous crimes. Same makers, no ads.</span></span></a>`;
  if(!S.unlocked)h+=`<div style="text-align:center;margin-top:16px"><button class="btn ghost" data-pay>Unlock all stories</button></div>`;
  app.innerHTML=h;bind();
 }
@@ -419,7 +440,7 @@ function check(){
 }
 function clearAll(){for(const c in P.guess)if(!isGiven(c))delete P.guess[c];bad.clear();persist();cur=firstOpen(0);if(cur<0)cur=0;$('#msg').textContent='';draw()}
 function win(){
- S.solved[P.id]=true;save();draw();$('#ttl').textContent=P.st.title;
+ S.solved[P.id]=true;save();maybeAskReview();draw();$('#ttl').textContent=P.st.title;
  app.querySelectorAll('.c[data-i]').forEach((el,j)=>setTimeout(()=>el.classList.add('pop'),j*12));
  const st=P.st,i=P.i,last=i===st.ch.length-1;
  setTimeout(()=>{
@@ -454,12 +475,28 @@ function showHelp(){openOv(`<div class="sheet"><h3>How to play</h3>
 <div class="row"><button class="btn" data-close>Got it</button></div></div>`)}
 function showPay(){
  if(S.unlocked){openOv(`<div class="sheet"><h3>All stories unlocked</h3><p>Thank you! Every story is yours, including new ones we add.</p><div class="row"><button class="btn" data-close>OK</button></div></div>`);return}
- const o=openOv(`<div class="sheet"><h3>Unlock every story</h3><div class="price">$3.99 <span style="font-size:15px;font-weight:600;color:var(--muted)">one time</span></div>
-<ul class="ticks"><li>All ${STORIES.length} stories now, plus every new story we add</li><li>No ads, ever</li><li>No subscription</li></ul>
-<p class="sub" style="margin:0">Prototype: real payment comes in the App Store and Google Play versions. The button below unlocks for testing.</p>
-<div class="row"><button class="btn" id="buy">Unlock (test)</button><button class="btn ghost" id="restore">Restore purchase</button><button class="btn ghost" data-close>Not now</button></div></div>`);
- o.querySelector('#buy').onclick=()=>{S.unlocked=true;save();closeOv();toast('Unlocked. Enjoy!');render()};
- o.querySelector('#restore').onclick=()=>toast('Nothing to restore in the prototype');
+ const perks=`<ul class="ticks"><li>All ${STORIES.length} stories now, plus every new story we add</li><li>No ads, ever</li><li>No subscription</li></ul>`;
+ if(WEBSITE){const o=openOv(`<div class="sheet"><h3>Get the full app</h3><p>This free demo has ${FREE_IDS.length} stories. The app for iPhone and Android has all of them, for one small payment.</p>${perks}
+<div class="row">${STORE_LINK?`<a class="btn" style="text-decoration:none" href="${STORE_LINK}" target="_blank" rel="noopener">Get the full app</a>`:`<button class="btn" disabled>Coming soon to ${STORE_NAME}</button>`}<button class="btn ghost" data-close>Not now</button></div></div>`);return}
+ const price=NATIVE?priceText:'$3.99';
+ const o=openOv(`<div class="sheet"><h3>Unlock every story</h3>${price?`<div class="price">${esc(price)} <span style="font-size:15px;font-weight:600;color:var(--muted)">one time</span></div>`:''}${perks}
+${TESTMODE?'<p class="sub" style="margin:0">Test version: this button unlocks for free. Real payment happens in the App Store and Google Play apps.</p>':''}
+<p class="msg" id="paymsg"></p>
+<div class="row"><button class="btn" id="buy">${TESTMODE?'Unlock (test)':'Unlock all'}</button><button class="btn ghost" id="restore">Restore purchase</button><button class="btn ghost" data-close>Not now</button></div></div>`);
+ const msg=o.querySelector('#paymsg');
+ if(NATIVE&&!priceText)shop.refresh().then(()=>{if(priceText&&!o.querySelector('.price'))o.querySelector('h3').insertAdjacentHTML('afterend',`<div class="price">${esc(priceText)} <span style="font-size:15px;font-weight:600;color:var(--muted)">one time</span></div>`)});
+ async function run(m,btn){
+  if(TESTMODE){if(m==='purchase'){S.unlocked=true;save();closeOv();toast('Unlocked. Enjoy!');render()}else msg.textContent='Nothing to restore in the test version.';return}
+  btn.disabled=true;msg.textContent=m==='purchase'?`Talking to ${STORE_NAME}…`:'Checking your purchases…';
+  try{const r=await shop.call(m);
+   if(r.unlocked){shop.set(true);closeOv();toast('All stories unlocked. Enjoy!');render()}
+   else if(r.pending)msg.textContent='Waiting for approval. The stories unlock as soon as it goes through.';
+   else if(r.cancelled)msg.textContent='';
+   else msg.textContent=m==='restore'?`No earlier purchase found on this ${ANDROID?'Google account':'Apple ID'}.`:'The purchase did not go through.';
+  }catch(e){msg.textContent=`Could not reach ${STORE_NAME}. Check your connection and try again.`}
+  btn.disabled=false}
+ o.querySelector('#buy').onclick=e=>run('purchase',e.currentTarget);
+ o.querySelector('#restore').onclick=e=>run('restore',e.currentTarget);
 }
 render();
 if(!localStorage.getItem(KEY+'-seenhelp')){try{localStorage.setItem(KEY+'-seenhelp','1')}catch(e){}if(!location.hash||location.hash==='#/')setTimeout(showHelp,300)}

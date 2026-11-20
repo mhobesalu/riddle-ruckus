@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Riddle &amp; Ruckus</string>
+    <string name="title_activity_main">Riddle &amp; Ruckus</string>
+    <string name="package_name">ee.silgrowth.riddleruckus</string>
+    <string name="custom_url_scheme">ee.silgrowth.riddleruckus</string>
+</resources>

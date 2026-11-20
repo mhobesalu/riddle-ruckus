@@ -1,0 +1,74 @@
+# Builds, signs and uploads the iPhone app to App Store Connect (TestFlight).
+# Run it from GitHub: Actions → "iOS release to TestFlight" → Run workflow.
+# Needs these repository secrets (Settings → Secrets and variables → Actions):
+#   APPLE_TEAM_ID          10-character team ID from developer.apple.com → Membership
+#   ASC_KEY_ID             App Store Connect API key ID (key role: Admin)
+#   ASC_ISSUER_ID          Issuer ID shown above the keys list
+#   ASC_PRIVATE_KEY        full text of the downloaded AuthKey_XXXX.p8 file
+name: iOS release to TestFlight
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version shown in the App Store (e.g. 1.0, 1.1)'
+        required: true
+        default: '1.0'
+jobs:
+  release:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use the newest Xcode
+        run: |
+          X=$(ls -d /Applications/Xcode_*.app | sort -V | tail -n 1)
+          echo "Using $X"
+          sudo xcode-select -s "$X"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Prepare web files
+        working-directory: native
+        run: |
+          npm ci
+          node build-web.js
+          npx cap sync ios
+      - name: Write API key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/keys"
+          printf '%s\n' "$ASC_PRIVATE_KEY" > "$RUNNER_TEMP/keys/AuthKey_${ASC_KEY_ID}.p8"
+      # The archive is built unsigned; the export step signs it for the App Store
+      # with Apple-managed (cloud) signing, so no device or certificate files are needed.
+      - name: Archive
+        working-directory: native/ios/App
+        env:
+          TEAM: ${{ secrets.APPLE_TEAM_ID }}
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            DEVELOPMENT_TEAM="$TEAM" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
+            archive | tail -n 80
+          exit ${PIPESTATUS[0]}
+      - name: Upload to App Store Connect
+        working-directory: native/ios/App
+        env:
+          TEAM: ${{ secrets.APPLE_TEAM_ID }}
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          sed "s/TEAM_ID_PLACEHOLDER/$TEAM/" ../../ci/ExportOptions.plist > "$RUNNER_TEMP/ExportOptions.plist"
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/keys/AuthKey_${KEY_ID}.p8" \
+            -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER"
+      - name: Remove API key
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/keys"

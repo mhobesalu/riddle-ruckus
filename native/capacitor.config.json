@@ -1,0 +1,20 @@
+{
+  "appId": "ee.silgrowth.riddleruckus",
+  "appName": "Riddle & Ruckus",
+  "webDir": "www",
+  "backgroundColor": "#2a1e3f",
+  "ios": {
+    "contentInset": "never",
+    "scheme": "Riddle",
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "plugins": {
+    "SystemBars": {
+      "style": "DARK",
+      "insetsHandling": "css"
+    }
+  },
+  "android": {
+    "backgroundColor": "#2a1e3f"
+  }
+}
