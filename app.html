@@ -99,6 +99,9 @@ const byId=id=>STORIES.find(s=>s.id===id);
 const isFree=id=>FREE_IDS.includes(id);
 const canPlay=id=>S.unlocked||isFree(id);
 const pid=(id,i)=>id+'-'+i;
+const known=st=>!!S.solved[pid(st.id,0)];
+const T=st=>known(st)?st.title:'Who or what is it?';
+const E=st=>known(st)?st.emoji:'❔';
 const doneCount=st=>st.ch.filter((_,i)=>S.solved[pid(st.id,i)]).length;
 
 function rng(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}
@@ -110,7 +113,7 @@ function makePuzzle(id,i){
  const enc={};AZ.split('').forEach((c,j)=>enc[c]=perm[j]);
  const up=text.toUpperCase(), letters=[...new Set(up.replace(/[^A-Z]/g,''))];
  // given letters: more help early in each story
- const nGive=[6,5,4,3,3][i]||3;
+ const nGive=[4,3,3,2,2][i]||2;
  const pool=letters.slice();for(let j=pool.length-1;j>0;j--){const k=Math.floor(r()*(j+1));[pool[j],pool[k]]=[pool[k],pool[j]]}
  const given=pool.slice(0,nGive).map(p=>enc[p]);
  return {text,up,enc,given,cipherLetters:letters.map(p=>enc[p]),dec:Object.fromEntries(letters.map(p=>[enc[p],p]))};
@@ -137,11 +140,11 @@ function renderHome(){
  $('#back').hidden=true;$('#ttl').textContent='Riddle & Ruckus';window.scrollTo(0,0);
  const nu=nextUp();
  let h=`<h1>Riddle &amp; Ruckus</h1><p class="sub">True stories and real science, in secret code. Crack each line to learn what happened next.</p>`;
- if(nu){const started=doneCount(nu.st)>0;h+=`<button class="card next" data-go="#/p/${nu.st.id}/${nu.i}"><span class="big">${nu.st.emoji}</span><span><span class="lbl">${started?'Next up':'Start here'}</span><br><b>${esc(nu.st.title)}</b><br><span class="sub">Chapter ${nu.i+1} of ${nu.st.ch.length}</span></span></button>`}
+ if(nu){const started=doneCount(nu.st)>0;h+=`<button class="card next" data-go="#/p/${nu.st.id}/${nu.i}"><span class="big">${E(nu.st)}</span><span><span class="lbl">${started?'Next up':'Start here'}</span><br><b>${esc(T(nu.st))}</b><br><span class="sub">Chapter ${nu.i+1} of ${nu.st.ch.length}</span></span></button>`}
  else if(!S.unlocked)h+=`<div class="card"><b>You finished all the free stories!</b><p class="sub" style="margin:4px 0 10px">Unlock every story for one small price.</p><button class="btn" data-pay>See all stories</button></div>`;
  for(const cat of CATS){h+=`<h2>${esc(cat.title)}</h2><p class="sub" style="margin-top:-4px">${esc(cat.sub)}</p>`;
  for(const st of STORIES.filter(x=>x.cat===cat.id)){const n=doneCount(st),lk=!canPlay(st.id);
-  h+=`<button class="card story" data-go="#/s/${st.id}"><span class="em">${st.emoji}</span><span><span class="t">${esc(st.title)}</span><br><span class="b">${esc(st.blurb)}</span><span class="dots">${st.ch.map((_,i)=>`<i class="${S.solved[pid(st.id,i)]?'on':''}"></i>`).join('')}</span></span>${lk?'<span class="lock">🔒</span>':(n===st.ch.length?'<span class="lock">✅</span>':'')}</button>`}
+  h+=`<button class="card story" data-go="#/s/${st.id}"><span class="em">${E(st)}</span><span><span class="t">${esc(T(st))}</span><br><span class="b">${esc(st.blurb)}</span><span class="dots">${st.ch.map((_,i)=>`<i class="${S.solved[pid(st.id,i)]?'on':''}"></i>`).join('')}</span></span>${lk?'<span class="lock">🔒</span>':(n===st.ch.length?'<span class="lock">✅</span>':'')}</button>`}
  }
  h+=`<p class="sub" style="text-align:center;margin-top:14px">More stories are on the way.</p>`;
  h+=`<h2>More from us</h2><a class="card promo" href="https://mhobesalu.github.io/mischief-motive/" target="_blank" rel="noopener"><span class="em">🔎</span><span><b>Mischief &amp; Motive</b><br><span class="sub" style="margin:0">Logic grid puzzles about ridiculous crimes. Same makers, no ads.</span></span></a>`;
@@ -149,8 +152,8 @@ function renderHome(){
  app.innerHTML=h;bind();
 }
 function renderStory(id){
- const st=byId(id),lk=!canPlay(id);$('#back').hidden=false;$('#ttl').textContent=st.title;window.scrollTo(0,0);
- let h=`<h1>${st.emoji} ${esc(st.title)}</h1><p class="sub">${esc(st.blurb)}</p>`;
+ const st=byId(id),lk=!canPlay(id);$('#back').hidden=false;$('#ttl').textContent=T(st);window.scrollTo(0,0);
+ let h=`<h1>${E(st)} ${esc(T(st))}</h1><p class="sub">${esc(st.blurb)}</p>`;
  if(lk){h+=`<div class="card"><b>🔒 This story is part of the full collection.</b><p class="sub" style="margin:4px 0 10px">One payment unlocks every story, including new ones we add later.</p><button class="btn" data-pay>Unlock all stories</button></div>`;app.innerHTML=h;bind();return}
  const n=doneCount(st);
  st.ch.forEach((t,i)=>{
@@ -158,7 +161,7 @@ function renderStory(id){
   else if(i===n)h+=`<button class="card chap todo" data-go="#/p/${id}/${i}"><span class="lbl">Chapter ${i+1} · next up</span><br><b>Tap to crack the code</b></button>`;
   else h+=`<div class="card chap locked"><span class="lbl" style="color:var(--muted)">Chapter ${i+1}</span><br>Solve the chapter before to read this one.</div>`;
  });
- if(n===st.ch.length){const nx=nextUp();h+=`<div class="card" style="text-align:center"><b>🎉 The end!</b>${st.lesson?`<p class="reveal" style="text-align:left"><b>Lesson:</b> ${esc(st.lesson)}</p>`:'<br>'}${nx?`<button class="btn" style="margin-top:10px" data-go="#/s/${nx.st.id}">Next story: ${esc(nx.st.title)}</button>`:(!S.unlocked?`<button class="btn" style="margin-top:10px" data-pay>Unlock more stories</button>`:'')}</div>`}
+ if(n===st.ch.length){const nx=nextUp();h+=`<div class="card" style="text-align:center"><b>🎉 The end!</b>${st.lesson?`<p class="reveal" style="text-align:left"><b>Lesson:</b> ${esc(st.lesson)}</p>`:'<br>'}${nx?`<button class="btn" style="margin-top:10px" data-go="#/s/${nx.st.id}">Next story</button>`:(!S.unlocked?`<button class="btn" style="margin-top:10px" data-pay>Unlock more stories</button>`:'')}</div>`}
  app.innerHTML=h;bind();
 }
 function bind(){
@@ -169,7 +172,7 @@ function bind(){
 // ---------- puzzle ----------
 let P,cur,cells,bad;
 function renderPuzzle(id,i){
- const st=byId(id);$('#back').hidden=false;$('#ttl').textContent=st.title;
+ const st=byId(id);$('#back').hidden=false;$('#ttl').textContent=T(st);
  if(i>doneCount(st)){go('#/s/'+id);return}
  document.body.classList.add('play');window.scrollTo(0,0);
  P=makePuzzle(id,i);P.id=pid(id,i);P.st=st;P.i=i;bad=new Set();
@@ -178,7 +181,7 @@ function renderPuzzle(id,i){
  for(const c in g)if(!P.given.includes(c)&&P.dec[c])P.guess[c]=g[c];
  const solvedAlready=!!S.solved[P.id];
  if(solvedAlready)P.cipherLetters.forEach(c=>P.guess[c]=P.dec[c]);
- let h=`<div class="ptitle"><b>${st.emoji} Chapter ${i+1} of ${st.ch.length}</b><span>Each letter stands for another letter.</span></div><div class="card"><div class="board" id="board">`;
+ let h=`<div class="ptitle"><b>${E(st)} Chapter ${i+1} of ${st.ch.length}</b><span>Each letter stands for another letter.</span></div><div class="card"><div class="board" id="board">`;
  cells=[];let idx=0;
  for(const word of P.up.split(/\s+/)){
   h+='<span class="w">';
@@ -196,9 +199,12 @@ function renderPuzzle(id,i){
  kb.querySelectorAll('button').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();key(b.dataset.key)}));
  app.querySelectorAll('.c[data-i]').forEach(el=>el.onclick=()=>{cur=+el.dataset.i;draw()});
  $('#hint').onclick=hint;$('#check').onclick=check;$('#clear').onclick=clearAll;
- cur=firstOpen(0);if(cur<0)cur=0;draw();
+ fitWords();cur=firstOpen(0);if(cur<0)cur=0;draw();
  if(solvedAlready)$('#msg').textContent='Already solved. Nice!';
 }
+function fitWords(){const bd=$('#board');if(!bd)return;const W=bd.clientWidth-12;
+ bd.querySelectorAll('.w').forEach(w=>{w.style.removeProperty('--cw');if(w.offsetWidth>W){const cw=parseFloat(getComputedStyle(w.querySelector('.c')).width);w.style.setProperty('--cw',Math.floor(cw*W/w.offsetWidth)+'px')}})}
+window.addEventListener('resize',()=>{if(document.body.classList.contains('play'))fitWords()});
 const isGiven=k=>P.given.includes(k);
 function firstOpen(from){for(let j=0;j<cells.length;j++){const n=(from+j)%cells.length;if(!P.guess[cells[n]])return n}return -1}
 function draw(){
@@ -243,16 +249,16 @@ function check(){
 }
 function clearAll(){for(const c in P.guess)if(!isGiven(c))delete P.guess[c];bad.clear();persist();cur=firstOpen(0);if(cur<0)cur=0;$('#msg').textContent='';draw()}
 function win(){
- S.solved[P.id]=true;save();draw();
+ S.solved[P.id]=true;save();draw();$('#ttl').textContent=P.st.title;
  app.querySelectorAll('.c[data-i]').forEach((el,j)=>setTimeout(()=>el.classList.add('pop'),j*12));
  const st=P.st,i=P.i,last=i===st.ch.length-1;
  setTimeout(()=>{
-  let h=`<div class="sheet"><h3>${last?'🎉 Story complete!':'✨ Cracked it!'}</h3><div class="reveal">`;
+  let h=`<div class="sheet"><h3>${last?'🎉 Story complete!':(i===0?`✨ Cracked it! ${st.emoji} ${esc(st.title)}`:'✨ Cracked it!')}</h3><div class="reveal">`;
   h+=last?st.ch.map(t=>`<p>${esc(t)}</p>`).join(''):`<p>${esc(st.ch[i])}</p>`;
   if(last&&st.lesson)h+=`<p><b>Lesson:</b> ${esc(st.lesson)}</p>`;
   h+=`</div><div class="row">`;
   if(!last)h+=`<button class="btn" data-go="#/p/${st.id}/${i+1}">Next chapter →</button><button class="btn ghost" data-go="#/s/${st.id}">Story so far</button>`;
-  else{const nx=nextUp();h+=nx?`<button class="btn" data-go="#/p/${nx.st.id}/${nx.i}">Next story: ${esc(nx.st.title)}</button>`:(!S.unlocked?`<button class="btn" data-pay>Get more stories</button>`:'');h+=`<button class="btn ghost" data-go="#/">All stories</button>`}
+  else{const nx=nextUp();h+=nx?`<button class="btn" data-go="#/p/${nx.st.id}/${nx.i}">Next story</button>`:(!S.unlocked?`<button class="btn" data-pay>Get more stories</button>`:'');h+=`<button class="btn ghost" data-go="#/">All stories</button>`}
   h+=`</div></div>`;openOv(h);
  },700);
 }
