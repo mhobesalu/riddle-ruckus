@@ -5,7 +5,7 @@
 |---|---|---|
 | Bundle / package ID | `ee.silgrowth.riddleruckus` | `ee.silgrowth.riddleruckus` |
 | One-time unlock | Non-consumable `ee.silgrowth.riddleruckus.allstories` | One-time product `allstories` |
-| Price | $3.99 / €3.99 (tier same as Mischief & Motive), Family Sharing on | €3.99 |
+| Price | $4.99 (Apple shows €5.99 in the euro zone), Family Sharing on, all 175 countries. Created in App Store Connect 2026-11-20 | €4.99 |
 | Name on the home screen | Riddle | Riddle & Ruckus |
 | Seller | Sild Growth OÜ | Sild Growth OÜ (Play org account "TASA Plan") |
 
@@ -13,12 +13,12 @@
 ### Apple
 1. developer.apple.com → Identifiers → **+** → App IDs → App → Bundle ID `ee.silgrowth.riddleruckus`, description "Riddle and Ruckus". In-App Purchase is on by default.
 2. App Store Connect → Apps → **+ New App**: iOS, name **Riddle & Ruckus: Cryptograms**, primary language English (U.S.), bundle ID above, SKU `riddleruckus`.
-3. In the new app → Monetization → In-App Purchases → **+** → Non-Consumable, reference name "All stories", product ID `ee.silgrowth.riddleruckus.allstories`, price $3.99, turn Family Sharing on, add display name "All stories" and description "Unlock every story, including new ones."
+3. In the new app → Monetization → In-App Purchases → **+** → Non-Consumable, reference name "All stories", product ID `ee.silgrowth.riddleruckus.allstories`, price $4.99, turn Family Sharing on, add display name "All stories" and description "Unlock every story, including new ones."
 4. GitHub repo riddle-ruckus → Settings → Secrets and variables → Actions → add the same four secrets as Mischief & Motive: `APPLE_TEAM_ID`, `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY` (the .p8 text). Then Actions → "iOS release to TestFlight" → Run workflow.
 
 ### Google Play
 1. Play Console → Create app: "Riddle & Ruckus: Cryptograms", game, free (with in-app purchase).
-2. Monetize → In-app products → create `allstories`, €3.99, active.
+2. Monetize → In-app products → create `allstories`, €4.99, active.
 3. GitHub secrets: `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD` (the same upload key as Mischief & Motive is fine; values in project files mischief-motive-appstore/android-upload-key/README.txt). Then Actions → "Android release" → Run workflow, download the .aab and upload it to Internal testing.
 
 ### Both

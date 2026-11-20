@@ -309,7 +309,7 @@ function showPay(){
  const perks=`<ul class="ticks"><li>All ${STORIES.length} stories now, plus every new story we add</li><li>No ads, ever</li><li>No subscription</li></ul>`;
  if(WEBSITE){const o=openOv(`<div class="sheet"><h3>Get the full app</h3><p>This free demo has ${FREE_IDS.length} stories. The app for iPhone and Android has all of them, for one small payment.</p>${perks}
 <div class="row">${STORE_LINK?`<a class="btn" style="text-decoration:none" href="${STORE_LINK}" target="_blank" rel="noopener">Get the full app</a>`:`<button class="btn" disabled>Coming soon to ${STORE_NAME}</button>`}<button class="btn ghost" data-close>Not now</button></div></div>`);return}
- const price=NATIVE?priceText:'$3.99';
+ const price=NATIVE?priceText:'$4.99';
  const o=openOv(`<div class="sheet"><h3>Unlock every story</h3>${price?`<div class="price">${esc(price)} <span style="font-size:15px;font-weight:600;color:var(--muted)">one time</span></div>`:''}${perks}
 ${TESTMODE?'<p class="sub" style="margin:0">Test version: this button unlocks for free. Real payment happens in the App Store and Google Play apps.</p>':''}
 <p class="msg" id="paymsg"></p>
