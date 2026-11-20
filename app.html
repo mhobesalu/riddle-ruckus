@@ -33,6 +33,10 @@ h1{font-size:24px;margin:4px 0 2px}h2{font-size:19px;margin:18px 0 8px}
 .dots{display:flex;gap:4px;margin-top:5px}.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--good)}
 .lock{margin-left:auto;font-size:18px;opacity:.7}
 .btn{border:0;border-radius:12px;padding:12px 18px;font-weight:700;background:var(--accent);color:#fff}
+.lvl{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;margin:0 0 6px}
+.lvl button{flex:1;border:0;border-radius:10px;padding:9px 6px;background:transparent;color:var(--ink);font-weight:600}
+.lvl button.on{background:var(--accent);color:#fff}
+.lvlnote{font-size:.85em;margin:0 0 14px}
 .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
 .chap{width:100%;text-align:left}
 .chap.done p{margin:6px 0 0}
@@ -134,8 +138,9 @@ function makePuzzle(id,i){
  do{perm=AZ.split('');for(let j=25;j>0;j--){const k=Math.floor(r()*(j+1));[perm[j],perm[k]]=[perm[k],perm[j]]}}while(perm.some((c,j)=>c===AZ[j]));
  const enc={};AZ.split('').forEach((c,j)=>enc[c]=perm[j]);
  const up=text.toUpperCase(), letters=[...new Set(up.replace(/[^A-Z]/g,''))];
- // given letters: more help early in each story
- const nGive=[4,3,3,2,2][i]||2;
+ // given letters depend on the chosen level; normal gives more help early in each story
+ const lv=S.level||'normal';
+ const nGive=lv==='easy'?Math.max(5,Math.round(letters.length*0.45)):lv==='hard'?([1,1,0,0,0][i]||0):([4,3,3,2,2][i]||2);
  const pool=letters.slice();for(let j=pool.length-1;j>0;j--){const k=Math.floor(r()*(j+1));[pool[j],pool[k]]=[pool[k],pool[j]]}
  const given=pool.slice(0,nGive).map(p=>enc[p]);
  return {text,up,enc,given,cipherLetters:letters.map(p=>enc[p]),dec:Object.fromEntries(letters.map(p=>[enc[p],p]))};
@@ -158,10 +163,14 @@ function nextUp(){
  for(const st of STORIES){if(!canPlay(st.id))continue;const n=doneCount(st);if(n<st.ch.length)return {st,i:n}}
  return null;
 }
+const LEVELS={easy:['Easy','Lots of letters given. A quick, relaxed read.'],normal:['Normal','A few letters given. A satisfying puzzle.'],hard:['Hard','One letter or none. For code breakers.']};
+function levelPicker(){const lv=S.level||'normal';
+ return `<div class="lvl" role="group" aria-label="Difficulty">${Object.keys(LEVELS).map(k=>`<button data-lvl="${k}" class="${k===lv?'on':''}" aria-pressed="${k===lv}">${LEVELS[k][0]}</button>`).join('')}</div><p class="sub lvlnote">${LEVELS[lv][1]}</p>`}
 function renderHome(){
  $('#back').hidden=true;$('#ttl').textContent='Riddle & Ruckus';window.scrollTo(0,0);
  const nu=nextUp();
  let h=`<h1>Riddle &amp; Ruckus</h1><p class="sub">True stories and real science, in secret code. Crack each line to learn what happened next.</p>`;
+ h+=levelPicker();
  if(nu){const started=doneCount(nu.st)>0;h+=`<button class="card next" data-go="#/p/${nu.st.id}/${nu.i}"><span class="big">${E(nu.st)}</span><span><span class="lbl">${started?'Next up':'Start here'}</span><br><b>${esc(T(nu.st))}</b><br><span class="sub">Chapter ${nu.i+1} of ${nu.st.ch.length}</span></span></button>`}
  else if(!S.unlocked)h+=`<div class="card"><b>You finished all the free stories!</b><p class="sub" style="margin:4px 0 10px">Unlock every story for one small price.</p><button class="btn" data-pay>See all stories</button></div>`;
  for(const cat of CATS){h+=`<h2>${esc(cat.title)}</h2><p class="sub" style="margin-top:-4px">${esc(cat.sub)}</p>`;
@@ -186,7 +195,8 @@ function renderStory(id){
  if(n===st.ch.length){const nx=nextUp();h+=`<div class="card" style="text-align:center"><b>🎉 The end!</b>${st.lesson?`<p class="reveal" style="text-align:left"><b>Lesson:</b> ${esc(st.lesson)}</p>`:'<br>'}${nx?`<button class="btn" style="margin-top:10px" data-go="#/s/${nx.st.id}">Next story</button>`:(!S.unlocked?`<button class="btn" style="margin-top:10px" data-pay>Unlock more stories</button>`:'')}</div>`}
  app.innerHTML=h;bind();
 }
-function bind(){
+function bindLevels(root){root.querySelectorAll('[data-lvl]').forEach(b=>b.onclick=()=>{S.level=b.dataset.lvl;save();render()})}
+function bind(){bindLevels(document);
  app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
  app.querySelectorAll('[data-pay]').forEach(b=>b.onclick=showPay);
 }
@@ -214,7 +224,8 @@ function renderPuzzle(id,i){
   h+='</span>';
  }
  h+=`</div></div><div class="msg" id="msg"></div><div class="tools"><button id="hint">💡 Hint</button><button id="check">✔︎ Check</button><button id="clear">↺ Clear</button></div>`;
- app.innerHTML=h;
+ if(!solvedAlready)h+=`<div class="lvl" style="margin-top:12px" role="group" aria-label="Difficulty">${Object.keys(LEVELS).map(k=>`<button data-lvl="${k}" class="${k===(S.level||'normal')?'on':''}" aria-pressed="${k===(S.level||'normal')}">${LEVELS[k][0]}</button>`).join('')}</div>`;
+ app.innerHTML=h;bindLevels(app);
  const kb=document.createElement('div');kb.className='kb';
  kb.innerHTML=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'].map((r,ri)=>`<div class="kr">${ri===2?'<button class="wide" data-key="Prev">◀</button>':''}${r.split('').map(c=>`<button data-key="${c}">${c}</button>`).join('')}${ri===2?'<button class="wide" data-key="Backspace">⌫</button>':''}</div>`).join('');
  document.body.appendChild(kb);
@@ -301,7 +312,7 @@ function toast(t){const d=document.createElement('div');d.className='toast';d.te
 function showHelp(){openOv(`<div class="sheet"><h3>How to play</h3>
 <p>Each chapter of a story is written in a secret code. Every letter has been swapped for a different letter, and the swap stays the same all through that chapter.</p>
 <p>The small letter under each box is the code. Tap a box, then type the real letter you think it is. Every box with the same code letter fills in at once.</p>
-<ul class="ticks"><li>Grey letters are given to you as a start.</li><li>Short words help: a one letter word is usually A or I, and THE is very common.</li><li><b>Hint</b> reveals the selected letter. <b>Check</b> shows wrong letters in red.</li></ul>
+<ul class="ticks"><li>Grey letters are given to you as a start. Choose <b>Easy</b> on the home screen for more of them, or <b>Hard</b> for fewer.</li><li>Short words help: a one letter word is usually A or I, and THE is very common.</li><li><b>Hint</b> reveals the selected letter. <b>Check</b> shows wrong letters in red.</li></ul>
 <p>Solve a chapter to read it and unlock the next part of the story.</p>
 <div class="row"><button class="btn" data-close>Got it</button></div></div>`)}
 function showPay(){
