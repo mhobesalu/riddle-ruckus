@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#2a1e3f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Riddle">
+<title>Riddle &amp; Ruckus</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<script>if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(function(){})})}</script>
+
+<style>
+:root{--ink:#2a1e3f;--paper:#fbf5ee;--card:#fff;--line:#e3d8cc;--muted:#7a6f86;--accent:#e8604c;--gold:#f2b84b;--good:#3b8f5a;--bad:#d2443a;
+ --sel:#ffe2a8;--same:#fff1d6;--given:#8a7a9c;--cw:clamp(21px,7.4vw,34px)}
+@media (prefers-color-scheme:dark){:root{--ink:#efe8f6;--paper:#16111f;--card:#211a2e;--line:#3a3049;--muted:#a597b5;--sel:#6b4d1f;--same:#3a2f22;--given:#b3a4c6}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+header{position:sticky;top:0;z-index:20;background:#2a1e3f;color:#fbf5ee;display:flex;align-items:center;gap:8px;
+ padding:calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + 12px) 8px calc(env(safe-area-inset-left) + 12px)}
+.brand{flex:1;min-width:0;font-weight:800;font-size:17px;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand svg{width:26px;height:26px;flex:none}
+.hb{background:rgba(255,255,255,.13);border:0;border-radius:10px;padding:7px 11px;color:inherit}
+.hb[hidden]{display:none}
+main{max-width:760px;margin:0 auto;padding:16px calc(env(safe-area-inset-right) + 14px) 40px calc(env(safe-area-inset-left) + 14px)}
+h1{font-size:24px;margin:4px 0 2px}h2{font-size:19px;margin:18px 0 8px}
+.sub{color:var(--muted);margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:10px 0}
+.next{display:flex;gap:14px;align-items:center;border:2px solid var(--accent);width:100%;text-align:left}
+.next .big{font-size:38px}
+.lbl{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);font-weight:800}
+.story{display:flex;gap:12px;align-items:center;width:100%;text-align:left}
+.story .em{font-size:32px;width:44px;text-align:center;flex:none}
+.story .t{font-weight:700}.story .b{color:var(--muted);font-size:14px}
+.dots{display:flex;gap:4px;margin-top:5px}.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--good)}
+.lock{margin-left:auto;font-size:18px;opacity:.7}
+.btn{border:0;border-radius:12px;padding:12px 18px;font-weight:700;background:var(--accent);color:#fff}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.chap{width:100%;text-align:left}
+.chap.done p{margin:6px 0 0}
+.chap.todo{border:2px solid var(--accent)}
+.chap.locked{opacity:.5}
+.promo{display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit}
+.promo .em{font-size:30px}
+/* puzzle */
+body.play main{padding-bottom:calc(env(safe-area-inset-bottom) + 200px)}
+.ptitle{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.ptitle b{font-size:17px}.ptitle span{color:var(--muted);font-size:14px}
+.board{display:flex;flex-wrap:wrap;gap:12px 10px;padding:14px 6px;justify-content:flex-start}
+.w{display:flex;gap:2px}
+.c{width:var(--cw);display:flex;flex-direction:column;align-items:center;border-radius:6px;padding:2px 0 1px;user-select:none}
+.c .g{height:calc(var(--cw)*1.05);width:100%;display:flex;align-items:flex-end;justify-content:center;font-weight:800;font-size:calc(var(--cw)*.72);
+ border-bottom:2px solid var(--ink);line-height:1}
+.c .k{font-size:calc(var(--cw)*.38);color:var(--muted);margin-top:2px;font-weight:600;letter-spacing:.3px}
+.c.p{width:auto;min-width:8px}.c.p .g{border-bottom-color:transparent}
+.c.same{background:var(--same)}.c.cur{background:var(--sel)}
+.c.giv .g{color:var(--given);border-bottom-color:var(--line)}
+.c.bad .g{color:var(--bad)}
+.tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}
+.tools button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 14px}
+.msg{text-align:center;color:var(--muted);min-height:22px;font-size:14px}
+.kb{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--card);border-top:1px solid var(--line);
+ padding:8px calc(env(safe-area-inset-right) + 4px) calc(env(safe-area-inset-bottom) + 8px) calc(env(safe-area-inset-left) + 4px)}
+.kr{display:flex;justify-content:center;gap:5px;margin:5px auto;max-width:560px}
+.kr button{flex:1;max-width:52px;height:46px;border:0;border-radius:8px;background:var(--paper);font-size:18px;font-weight:700;box-shadow:0 1px 0 var(--line)}
+.kr button.used{opacity:.35}
+.kr button.wide{max-width:76px;flex:1.5;font-size:16px}
+/* overlays */
+.ov{position:fixed;inset:0;z-index:40;background:rgba(20,12,30,.55);display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:700px){.ov{align-items:center}}
+.sheet{background:var(--card);border-radius:20px 20px 0 0;max-width:560px;width:100%;padding:22px 20px calc(env(safe-area-inset-bottom) + 20px);max-height:88vh;overflow:auto}
+@media(min-width:700px){.sheet{border-radius:20px}}
+.sheet h3{margin:0 0 6px;font-size:21px}
+.sheet .row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.reveal{font-size:18px;line-height:1.55;font-family:Georgia,"Times New Roman",serif;background:var(--paper);border-radius:12px;padding:14px;margin:10px 0}
+.reveal p{margin:0 0 10px}
+.price{font-size:28px;font-weight:800}
+ul.ticks{padding-left:20px;margin:8px 0}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 64px);transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:12px;z-index:50;font-size:15px}
+.pop{animation:pop .35s ease}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+</style>
+</head>
+<body>
+<header>
+ <button class="hb" id="back" hidden aria-label="Back">‹ Back</button>
+ <div class="brand"><svg viewBox="0 0 32 32"><rect x="3" y="5" width="26" height="22" rx="4" fill="#e8604c"/><path d="M9 13h4M9 19h4M19 13h4M19 19h4" stroke="#fbf5ee" stroke-width="2.4" stroke-linecap="round"/><text x="16" y="20" font-size="11" text-anchor="middle" fill="#fbf5ee" font-weight="800" font-family="Arial">?</text></svg><span id="ttl">Riddle &amp; Ruckus</span></div>
+ <button class="hb" id="help">How to play</button>
+</header>
+<main id="app"></main>
+<script>
+// Original silly stories. Each story = 5 chapters; each chapter is one cryptogram.
+// All text written for this app. Keep chapters ~70-170 letters. Add new batches as stories2.js etc.
+const STORIES = [
+{id:'duck', emoji:'🦆', title:'The Duck Who Ran for Mayor', blurb:'A small town election gets very loud.', ch:[
+ "Nobody in Puddleford expected Gerald the duck to run for mayor. Then again, nobody expected him to own a tie.",
+ "His campaign promise was simple: more bread, fewer fences, and a pond in every kitchen.",
+ "The current mayor called it a stunt. Gerald replied by quacking loudly through her entire speech.",
+ "On election day, every child in town voted twice, and three of the geese voted four times.",
+ "Gerald won by a landslide. His first act as mayor was to declare Tuesday a national nap day."]},
+{id:'socks', emoji:'🧦', title:'The Case of the Vanishing Socks', blurb:'Where do the odd socks really go?', ch:[
+ "For eleven years, Dorothy lost exactly one sock every laundry day. This week, she decided to stay up and watch.",
+ "At midnight, the dryer door creaked open, and a tiny figure in a woolly hat tiptoed out.",
+ "He introduced himself as Fergus, chief knitter of a very cold village that lived behind the washing machine.",
+ "The villagers unravelled the socks to make blankets. Winters behind a washing machine are famously brutal.",
+ "Dorothy now leaves one spare sock on the dryer every Sunday. In return, she gets a thank you card shaped like a mitten."]},
+{id:'snail', emoji:'🐌', title:'The Slowest Race on Earth', blurb:'A marathon that takes all week.', ch:[
+ "The annual snail marathon in Little Dribbling began on Monday morning. The commentators packed sandwiches for a week.",
+ "By Wednesday, the favourite, a snail named Thunderbolt, had travelled almost the length of a carrot.",
+ "On Thursday, a rival snail was caught riding on the back of a tortoise. The judges called it cheating, but also kind of genius.",
+ "Thunderbolt stopped on Friday to admire a beautiful leaf. The crowd groaned so loudly that a scarecrow fell over.",
+ "Nobody finished. The race was declared a draw, and everyone agreed it was the most exciting week of their lives."]},
+{id:'llama', emoji:'🦙', title:'A Llama in the Choir', blurb:'The choir needed a bass. They got Bernard.', ch:[
+ "The church choir of Saint Bramble needed a new bass singer. Sadly, the only one who came to the audition was a llama.",
+ "His name was Bernard, and he could hold a low note for nine minutes without taking a single breath.",
+ "The sopranos complained that Bernard spat whenever they sang out of tune, which was, to be fair, quite often.",
+ "Before the big winter concert, Bernard ate the sheet music, the conductor's baton, and half of a tuba.",
+ "He sang the whole concert from memory. The audience wept, the tuba player did not, and Bernard got a standing ovation."]},
+{id:'nana', emoji:'🚀', title:'Nana Goes to the Moon', blurb:'Rejected by the space agency? Build your own.', ch:[
+ "When the space agency rejected her application, eighty year old Nana Pearl built a rocket in her garden shed.",
+ "She used three vacuum cleaners, a garden hose, a deck chair, and an alarming number of fireworks.",
+ "The neighbours called the police. The officer stayed for tea and ended up helping her fix the fins.",
+ "Lift off was delayed twice: once for rain, and once because Nana could not find her reading glasses.",
+ "She never reached the moon, but she did land on the roof of the town hall, just in time for the raffle. She won a toaster."]},
+{id:'court', emoji:'🐈', title:'Whiskers versus Biscuit', blurb:'A cat takes a dog to court over a sunny spot.', ch:[
+ "The courtroom fell silent as Whiskers the cat took the stand. She accused Biscuit the dog of stealing her favourite sunny spot.",
+ "Biscuit's lawyer, a nervous hamster, argued that sunshine cannot be owned by anyone, least of all a cat.",
+ "The jury of twelve goldfish forgot the question every few seconds, so the trial took a remarkably long time.",
+ "The surprise witness was the vacuum cleaner. Nobody understood a word it said, but both animals hid under the sofa.",
+ "The judge ruled that the sunny spot belongs to whoever falls asleep in it first. Both animals have been napping in court ever since."]},
+{id:'vending', emoji:'🥤', title:'The Moody Vending Machine', blurb:'Say please, or get prune juice.', ch:[
+ "The vending machine on the third floor had feelings. If you did not say please, it gave you a warm can of prune juice.",
+ "Derek from accounting kicked it once. For the next month, every bag of crisps he bought contained exactly one crisp.",
+ "Soon the whole office was leaving it compliments on sticky notes. It began handing out free chocolate to the polite ones.",
+ "When the manager tried to replace it with a newer model, the old machine refused to give anyone their coins back.",
+ "After a long meeting, everyone agreed it could stay. It now has its own name badge, a pot plant, and a seat at the office party."]},
+{id:'spaghetti', emoji:'🍝', title:'The Spaghetti Bridge Contest', blurb:'Engineering, pasta, and a very bad accident.', ch:[
+ "Every year, the engineering students of Pemberton build bridges out of dry spaghetti. This year, each bridge had to hold a pumpkin.",
+ "Team one used a clever triangle design. Team two used glue, hope, and a lot of tape when the judges were not looking.",
+ "On the morning of the contest, the caretaker accidentally put both bridges in a pot of boiling water.",
+ "Rather than panic, the students added tomato sauce, invited the judges to lunch, and called it a structural tasting.",
+ "The pumpkin was never tested, but everyone agreed it was the best contest in years. The caretaker got an honorary degree."]},
+];
+const FREE_IDS = ['duck','socks','snail'];
+
+(function(){
+const KEY='ciphertales-v1';
+let S; try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){S={}}
+S.solved=S.solved||{};S.g=S.g||{};S.hints=S.hints||{};S.unlocked=!!S.unlocked;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s), app=$('#app');
+const esc=t=>t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const byId=id=>STORIES.find(s=>s.id===id);
+const isFree=id=>FREE_IDS.includes(id);
+const canPlay=id=>S.unlocked||isFree(id);
+const pid=(id,i)=>id+'-'+i;
+const doneCount=st=>st.ch.filter((_,i)=>S.solved[pid(st.id,i)]).length;
+
+function rng(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}
+ return function(){h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return (h>>>0)/4294967296}}
+function makePuzzle(id,i){
+ const text=byId(id).ch[i], r=rng('ct:'+id+':'+i);
+ let perm;
+ do{perm=AZ.split('');for(let j=25;j>0;j--){const k=Math.floor(r()*(j+1));[perm[j],perm[k]]=[perm[k],perm[j]]}}while(perm.some((c,j)=>c===AZ[j]));
+ const enc={};AZ.split('').forEach((c,j)=>enc[c]=perm[j]);
+ const up=text.toUpperCase(), letters=[...new Set(up.replace(/[^A-Z]/g,''))];
+ // given letters: more help early in each story
+ const nGive=[6,5,4,3,3][i]||3;
+ const pool=letters.slice();for(let j=pool.length-1;j>0;j--){const k=Math.floor(r()*(j+1));[pool[j],pool[k]]=[pool[k],pool[j]]}
+ const given=pool.slice(0,nGive).map(p=>enc[p]);
+ return {text,up,enc,given,cipherLetters:letters.map(p=>enc[p]),dec:Object.fromEntries(letters.map(p=>[enc[p],p]))};
+}
+
+// ---------- routing ----------
+function go(h){location.hash=h}
+window.addEventListener('hashchange',render);
+$('#back').onclick=()=>{const h=location.hash;const m=h.match(/^#\/p\/(\w+)/);go(m?'#/s/'+m[1]:'#/')};
+$('#help').onclick=showHelp;
+
+function render(){
+ closeOv();document.body.classList.remove('play');const kb=$('.kb');if(kb)kb.remove();
+ const h=location.hash||'#/';let m;
+ if((m=h.match(/^#\/p\/(\w+)\/(\d)$/))&&byId(m[1])){if(!canPlay(m[1])){go('#/s/'+m[1]);return}return renderPuzzle(m[1],+m[2])}
+ if((m=h.match(/^#\/s\/(\w+)$/))&&byId(m[1]))return renderStory(m[1]);
+ renderHome();
+}
+function nextUp(){
+ for(const st of STORIES){if(!canPlay(st.id))continue;const n=doneCount(st);if(n<st.ch.length)return {st,i:n}}
+ return null;
+}
+function renderHome(){
+ $('#back').hidden=true;$('#ttl').textContent='Riddle & Ruckus';window.scrollTo(0,0);
+ const nu=nextUp();
+ let h=`<h1>Riddle &amp; Ruckus</h1><p class="sub">Silly stories in secret code. Crack each line to read what happens next.</p>`;
+ if(nu){const started=doneCount(nu.st)>0;h+=`<button class="card next" data-go="#/p/${nu.st.id}/${nu.i}"><span class="big">${nu.st.emoji}</span><span><span class="lbl">${started?'Next up':'Start here'}</span><br><b>${esc(nu.st.title)}</b><br><span class="sub">Chapter ${nu.i+1} of ${nu.st.ch.length}</span></span></button>`}
+ else if(!S.unlocked)h+=`<div class="card"><b>You finished all the free stories!</b><p class="sub" style="margin:4px 0 10px">Unlock every story for one small price.</p><button class="btn" data-pay>See all stories</button></div>`;
+ h+=`<h2>Stories</h2>`;
+ for(const st of STORIES){const n=doneCount(st),lk=!canPlay(st.id);
+  h+=`<button class="card story" data-go="#/s/${st.id}"><span class="em">${st.emoji}</span><span><span class="t">${esc(st.title)}</span><br><span class="b">${esc(st.blurb)}</span><span class="dots">${st.ch.map((_,i)=>`<i class="${S.solved[pid(st.id,i)]?'on':''}"></i>`).join('')}</span></span>${lk?'<span class="lock">🔒</span>':(n===st.ch.length?'<span class="lock">✅</span>':'')}</button>`}
+ h+=`<p class="sub" style="text-align:center;margin-top:14px">More stories are on the way.</p>`;
+ h+=`<h2>More from us</h2><a class="card promo" href="https://mhobesalu.github.io/mischief-motive/" target="_blank" rel="noopener"><span class="em">🔎</span><span><b>Mischief &amp; Motive</b><br><span class="sub" style="margin:0">Logic grid puzzles about ridiculous crimes. Same makers, no ads.</span></span></a>`;
+ if(!S.unlocked)h+=`<div style="text-align:center;margin-top:16px"><button class="btn ghost" data-pay>Unlock all stories</button></div>`;
+ app.innerHTML=h;bind();
+}
+function renderStory(id){
+ const st=byId(id),lk=!canPlay(id);$('#back').hidden=false;$('#ttl').textContent=st.title;window.scrollTo(0,0);
+ let h=`<h1>${st.emoji} ${esc(st.title)}</h1><p class="sub">${esc(st.blurb)}</p>`;
+ if(lk){h+=`<div class="card"><b>🔒 This story is part of the full collection.</b><p class="sub" style="margin:4px 0 10px">One payment unlocks every story, including new ones we add later.</p><button class="btn" data-pay>Unlock all stories</button></div>`;app.innerHTML=h;bind();return}
+ const n=doneCount(st);
+ st.ch.forEach((t,i)=>{
+  if(S.solved[pid(id,i)])h+=`<div class="card chap done"><span class="lbl" style="color:var(--good)">Chapter ${i+1}</span><p class="reveal" style="margin:6px 0 0">${esc(t)}</p></div>`;
+  else if(i===n)h+=`<button class="card chap todo" data-go="#/p/${id}/${i}"><span class="lbl">Chapter ${i+1} · next up</span><br><b>Tap to crack the code</b></button>`;
+  else h+=`<div class="card chap locked"><span class="lbl" style="color:var(--muted)">Chapter ${i+1}</span><br>Solve the chapter before to read this one.</div>`;
+ });
+ if(n===st.ch.length){const nx=nextUp();h+=`<div class="card" style="text-align:center"><b>🎉 The end!</b><br>${nx?`<button class="btn" style="margin-top:10px" data-go="#/s/${nx.st.id}">Next story: ${esc(nx.st.title)}</button>`:(!S.unlocked?`<button class="btn" style="margin-top:10px" data-pay>Unlock more stories</button>`:'')}</div>`}
+ app.innerHTML=h;bind();
+}
+function bind(){
+ app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+ app.querySelectorAll('[data-pay]').forEach(b=>b.onclick=showPay);
+}
+
+// ---------- puzzle ----------
+let P,cur,cells,bad;
+function renderPuzzle(id,i){
+ const st=byId(id);$('#back').hidden=false;$('#ttl').textContent=st.title;
+ if(i>doneCount(st)){go('#/s/'+id);return}
+ document.body.classList.add('play');window.scrollTo(0,0);
+ P=makePuzzle(id,i);P.id=pid(id,i);P.st=st;P.i=i;bad=new Set();
+ const g=S.g[P.id]||{};P.guess={};
+ P.given.forEach(c=>P.guess[c]=P.dec[c]);(S.hints[P.id]||[]).forEach(c=>{if(P.dec[c]){P.guess[c]=P.dec[c];P.given.push(c)}});
+ for(const c in g)if(!P.given.includes(c)&&P.dec[c])P.guess[c]=g[c];
+ const solvedAlready=!!S.solved[P.id];
+ if(solvedAlready)P.cipherLetters.forEach(c=>P.guess[c]=P.dec[c]);
+ let h=`<div class="ptitle"><b>${st.emoji} Chapter ${i+1} of ${st.ch.length}</b><span>Each letter stands for another letter.</span></div><div class="card"><div class="board" id="board">`;
+ cells=[];let idx=0;
+ for(const word of P.up.split(/\s+/)){
+  h+='<span class="w">';
+  for(const ch of word){
+   if(/[A-Z]/.test(ch)){const k=P.enc[ch];h+=`<span class="c" data-i="${idx}" data-k="${k}"><span class="g"></span><span class="k">${k}</span></span>`;cells.push(k);idx++}
+   else h+=`<span class="c p"><span class="g">${esc(ch)}</span><span class="k">&nbsp;</span></span>`;
+  }
+  h+='</span>';
+ }
+ h+=`</div></div><div class="msg" id="msg"></div><div class="tools"><button id="hint">💡 Hint</button><button id="check">✔︎ Check</button><button id="clear">↺ Clear</button></div>`;
+ app.innerHTML=h;
+ const kb=document.createElement('div');kb.className='kb';
+ kb.innerHTML=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'].map((r,ri)=>`<div class="kr">${ri===2?'<button class="wide" data-key="Prev">◀</button>':''}${r.split('').map(c=>`<button data-key="${c}">${c}</button>`).join('')}${ri===2?'<button class="wide" data-key="Backspace">⌫</button>':''}</div>`).join('');
+ document.body.appendChild(kb);
+ kb.querySelectorAll('button').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();key(b.dataset.key)}));
+ app.querySelectorAll('.c[data-i]').forEach(el=>el.onclick=()=>{cur=+el.dataset.i;draw()});
+ $('#hint').onclick=hint;$('#check').onclick=check;$('#clear').onclick=clearAll;
+ cur=firstOpen(0);if(cur<0)cur=0;draw();
+ if(solvedAlready)$('#msg').textContent='Already solved. Nice!';
+}
+const isGiven=k=>P.given.includes(k);
+function firstOpen(from){for(let j=0;j<cells.length;j++){const n=(from+j)%cells.length;if(!P.guess[cells[n]])return n}return -1}
+function draw(){
+ const k=cells[cur];
+ app.querySelectorAll('.c[data-i]').forEach(el=>{const kk=el.dataset.k,gs=P.guess[kk]||'';
+  el.querySelector('.g').textContent=gs;
+  el.classList.toggle('giv',isGiven(kk));el.classList.toggle('same',kk===k);el.classList.toggle('cur',+el.dataset.i===cur);
+  el.classList.toggle('bad',bad.has(kk));
+ });
+ const used=new Set(Object.values(P.guess));
+ document.querySelectorAll('.kb [data-key]').forEach(b=>b.classList.toggle('used',used.has(b.dataset.key)));
+ const el=app.querySelector(`.c[data-i="${cur}"]`);if(el){const r=el.getBoundingClientRect(),kbh=($('.kb')||{}).offsetHeight||0;
+  if(r.bottom>innerHeight-kbh-10||r.top<70)el.scrollIntoView({block:'center',behavior:'smooth'})}
+}
+function persist(){const o={};for(const c in P.guess)if(!isGiven(c))o[c]=P.guess[c];S.g[P.id]=o;save()}
+function key(k){
+ if(!P||S.solved[P.id])return;
+ const c=cells[cur];
+ if(k==='Backspace'){if(!isGiven(c)&&P.guess[c]){delete P.guess[c];bad.delete(c)}else{cur=(cur-1+cells.length)%cells.length}persist();draw();return}
+ if(k==='Prev'||k==='ArrowLeft'){cur=(cur-1+cells.length)%cells.length;draw();return}
+ if(k==='ArrowRight'){cur=(cur+1)%cells.length;draw();return}
+ if(!/^[A-Z]$/.test(k))return;
+ if(isGiven(c)){const n=firstOpen(cur);if(n>=0)cur=n;draw();return}
+ for(const o in P.guess)if(P.guess[o]===k&&o!==c){if(isGiven(o)){toast(`${k} is already used`);return}delete P.guess[o];bad.delete(o)}
+ P.guess[c]=k;bad.delete(c);persist();
+ if(solved())return win();
+ const n=firstOpen(cur);if(n>=0)cur=n;else{$('#msg').textContent='Every letter is filled, but something is not right yet. Try Check.'}
+ draw();
+}
+function solved(){return P.cipherLetters.every(c=>P.guess[c]===P.dec[c])}
+function hint(){
+ if(S.solved[P.id])return;
+ let c=cells[cur];if(P.guess[c]===P.dec[c])c=P.cipherLetters.find(x=>P.guess[x]!==P.dec[x]);if(!c)return;
+ const p=P.dec[c];for(const o in P.guess)if(P.guess[o]===p&&o!==c)delete P.guess[o];
+ P.guess[c]=p;P.given.push(c);bad.delete(c);(S.hints[P.id]=S.hints[P.id]||[]).push(c);persist();
+ if(solved())return win();
+ const n=firstOpen(cur);if(n>=0)cur=n;draw();
+}
+function check(){
+ bad=new Set(P.cipherLetters.filter(c=>P.guess[c]&&P.guess[c]!==P.dec[c]));
+ $('#msg').textContent=bad.size?`${bad.size} letter${bad.size>1?'s are':' is'} wrong (shown in red).`:'Everything so far is correct. Keep going!';draw();
+}
+function clearAll(){for(const c in P.guess)if(!isGiven(c))delete P.guess[c];bad.clear();persist();cur=firstOpen(0);if(cur<0)cur=0;$('#msg').textContent='';draw()}
+function win(){
+ S.solved[P.id]=true;save();draw();
+ app.querySelectorAll('.c[data-i]').forEach((el,j)=>setTimeout(()=>el.classList.add('pop'),j*12));
+ const st=P.st,i=P.i,last=i===st.ch.length-1;
+ setTimeout(()=>{
+  let h=`<div class="sheet"><h3>${last?'🎉 Story complete!':'✨ Cracked it!'}</h3><div class="reveal">`;
+  h+=last?st.ch.map(t=>`<p>${esc(t)}</p>`).join(''):`<p>${esc(st.ch[i])}</p>`;
+  h+=`</div><div class="row">`;
+  if(!last)h+=`<button class="btn" data-go="#/p/${st.id}/${i+1}">Next chapter →</button><button class="btn ghost" data-go="#/s/${st.id}">Story so far</button>`;
+  else{const nx=nextUp();h+=nx?`<button class="btn" data-go="#/p/${nx.st.id}/${nx.i}">Next story: ${esc(nx.st.title)}</button>`:(!S.unlocked?`<button class="btn" data-pay>Get more stories</button>`:'');h+=`<button class="btn ghost" data-go="#/">All stories</button>`}
+  h+=`</div></div>`;openOv(h);
+ },700);
+}
+window.addEventListener('keydown',e=>{
+ if(!document.body.classList.contains('play')||$('.ov')||e.metaKey||e.ctrlKey||e.altKey)return;
+ const k=e.key.length===1?e.key.toUpperCase():e.key;
+ if(/^[A-Z]$/.test(k)||['Backspace','ArrowLeft','ArrowRight'].includes(k)){e.preventDefault();key(k)}
+});
+
+// ---------- overlays ----------
+function openOv(inner){closeOv();const o=document.createElement('div');o.className='ov';o.innerHTML=inner;document.body.appendChild(o);
+ o.onclick=e=>{if(e.target===o)closeOv()};
+ o.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{closeOv();const t=b.dataset.go;if(location.hash===t)render();else go(t)});
+ o.querySelectorAll('[data-pay]').forEach(b=>b.onclick=showPay);
+ o.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeOv);return o}
+function closeOv(){document.querySelectorAll('.ov').forEach(o=>o.remove())}
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
+function showHelp(){openOv(`<div class="sheet"><h3>How to play</h3>
+<p>Each chapter of a story is written in a secret code. Every letter has been swapped for a different letter, and the swap stays the same all through that chapter.</p>
+<p>The small letter under each box is the code. Tap a box, then type the real letter you think it is. Every box with the same code letter fills in at once.</p>
+<ul class="ticks"><li>Grey letters are given to you as a start.</li><li>Short words help: a one letter word is usually A or I, and THE is very common.</li><li><b>Hint</b> reveals the selected letter. <b>Check</b> shows wrong letters in red.</li></ul>
+<p>Solve a chapter to read it and unlock the next part of the story.</p>
+<div class="row"><button class="btn" data-close>Got it</button></div></div>`)}
+function showPay(){
+ if(S.unlocked){openOv(`<div class="sheet"><h3>All stories unlocked</h3><p>Thank you! Every story is yours, including new ones we add.</p><div class="row"><button class="btn" data-close>OK</button></div></div>`);return}
+ const o=openOv(`<div class="sheet"><h3>Unlock every story</h3><div class="price">$3.99 <span style="font-size:15px;font-weight:600;color:var(--muted)">one time</span></div>
+<ul class="ticks"><li>All ${STORIES.length} stories now, plus every new story we add</li><li>No ads, ever</li><li>No subscription</li></ul>
+<p class="sub" style="margin:0">Prototype: real payment comes in the App Store and Google Play versions. The button below unlocks for testing.</p>
+<div class="row"><button class="btn" id="buy">Unlock (test)</button><button class="btn ghost" id="restore">Restore purchase</button><button class="btn ghost" data-close>Not now</button></div></div>`);
+ o.querySelector('#buy').onclick=()=>{S.unlocked=true;save();closeOv();toast('Unlocked. Enjoy!');render()};
+ o.querySelector('#restore').onclick=()=>toast('Nothing to restore in the prototype');
+}
+render();
+if(!localStorage.getItem(KEY+'-seenhelp')){try{localStorage.setItem(KEY+'-seenhelp','1')}catch(e){}if(!location.hash||location.hash==='#/')setTimeout(showHelp,300)}
+})();
+</script>
+</body>
+</html>
