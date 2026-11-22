@@ -28,6 +28,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 class MainViewController: CAPBridgeViewController {
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(StorePlugin())
+        // No rubber-band bounce: it slid the whole page (header and keyboard) up under the clock.
+        webView?.scrollView.bounces = false
+        webView?.scrollView.alwaysBounceVertical = false
     }
 }
 

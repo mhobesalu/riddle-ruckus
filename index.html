@@ -17,7 +17,7 @@
  --sel:#ffe2a8;--same:#fff1d6;--given:#8a7a9c;--word:#f6eee4;--cw:clamp(21px,7.4vw,34px)}
 @media (prefers-color-scheme:dark){:root{--ink:#efe8f6;--paper:#16111f;--card:#211a2e;--line:#3a3049;--muted:#a597b5;--sel:#6b4d1f;--same:#3a2f22;--given:#b3a4c6;--word:#2a2238}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+html,body{margin:0;overscroll-behavior:none;background:var(--paper);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
 button{font:inherit;color:inherit;cursor:pointer}
 header{position:sticky;top:0;z-index:20;background:#2a1e3f;color:#fbf5ee;display:flex;align-items:center;gap:8px;
  padding:calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + 12px) 8px calc(env(safe-area-inset-left) + 12px)}
@@ -1000,7 +1000,8 @@ function draw(){
  const used=new Set(Object.values(P.guess));
  document.querySelectorAll('.kb [data-key]').forEach(b=>b.classList.toggle('used',used.has(b.dataset.key)));
  const el=app.querySelector(`.c[data-i="${cur}"]`);if(el){const r=el.getBoundingClientRect(),kbh=($('.kb')||{}).offsetHeight||0;
-  if(r.bottom>innerHeight-kbh-10||r.top<70)el.scrollIntoView({block:'center',behavior:'smooth'})}
+  if(r.bottom>innerHeight-kbh-10||r.top<70){const max=document.documentElement.scrollHeight-innerHeight;
+   window.scrollTo({top:Math.max(0,Math.min(max,scrollY+r.top-(innerHeight-kbh)/2+r.height/2)),behavior:'smooth'})}}
 }
 function persist(){const o={};for(const c in P.guess)if(!isGiven(c))o[c]=P.guess[c];S.g[P.id]=o;save()}
 function key(k){
