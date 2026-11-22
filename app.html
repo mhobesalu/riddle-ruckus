@@ -96,6 +96,7 @@ ul.ticks{padding-left:20px;margin:8px 0}
 /*STORIES*/
 /*STORIES2*/
 /*STORIES3*/
+/*STORIES4*/
 (function(){
 const KEY='ciphertales-v1';
 let S; try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){S={}}
@@ -202,13 +203,16 @@ function renderStory(id){
   else if(i===n)h+=`<button class="card chap todo" data-go="#/p/${id}/${i}"><span class="lbl">Chapter ${i+1} · next up</span><br><b>Tap to crack the code</b></button>`;
   else h+=`<div class="card chap locked"><span class="lbl" style="color:var(--muted)">Chapter ${i+1}</span><br>Solve the chapter before to read this one.</div>`;
  });
- if(n===st.ch.length){const nx=nextUp();h+=`<div class="card" style="text-align:center"><b>🎉 The end!</b>${st.lesson?`<p class="reveal" style="text-align:left"><b>Lesson:</b> ${esc(st.lesson)}</p>`:'<br>'}${nx?`<button class="btn" style="margin-top:10px" data-go="#/s/${nx.st.id}">Next story</button>`:(!S.unlocked?`<button class="btn" style="margin-top:10px" data-pay>Unlock more stories</button>`:'')}</div>`}
+ if(n===st.ch.length){const nx=nextUp();h+=`<div class="card" style="text-align:center"><b>🎉 The end!</b>${st.lesson?`<p class="reveal" style="text-align:left"><b>Lesson:</b> ${esc(st.lesson)}</p>`:'<br>'}${nx?`<button class="btn" style="margin-top:10px" data-go="#/s/${nx.st.id}">Next story</button>`:(!S.unlocked?`<button class="btn" style="margin-top:10px" data-pay>Unlock more stories</button>`:'')}<br><button class="btn ghost" style="margin-top:10px" data-replay="${id}">↺ Play this story again</button></div>`}
  app.innerHTML=h;bind();
 }
 function bindLevels(root){root.querySelectorAll('[data-lvl]').forEach(b=>b.onclick=()=>{S.level=b.dataset.lvl;save();render()})}
 function bind(){bindLevels(document);
  app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
  app.querySelectorAll('[data-pay]').forEach(b=>b.onclick=showPay);
+ app.querySelectorAll('[data-replay]').forEach(btn=>btn.onclick=()=>{
+  if(!btn.dataset.sure){btn.dataset.sure='1';btn.textContent='Tap again to start this story over';return}
+  const st=byId(btn.dataset.replay);st.ch.forEach((_,i)=>{const k=pid(st.id,i);delete S.solved[k];delete S.g[k];if(S.hints)delete S.hints[k]});save();go('#/p/'+st.id+'/0')});
  app.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{S.cat=b.dataset.cat;save();render()});
  const on=app.querySelector('.cats .on');if(on){const r=on.parentNode;r.scrollLeft=on.offsetLeft-(r.clientWidth-on.offsetWidth)/2}
 }
