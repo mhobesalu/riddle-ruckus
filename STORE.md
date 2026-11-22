@@ -26,30 +26,56 @@
 - App Privacy: **Data Not Collected** (no analytics, no accounts, progress stays on the phone).
 - Age rating: no objectionable content. Stories mention historical events (arrests, a shipwreck) only in plain words → 4+ / Everyone. Medical/health info: none (the brain stories are general science, not advice).
 
-## Listing text
+## Listing text (updated 2026-11-22: 49 stories, 9 categories; no living people's names in the listing)
 **Name:** Decoded: True Stories (21)
 **Subtitle (iOS, 30):** Learn by cracking codes (23)
-**Short description (Play, 80):** Crack coded true stories of founders, rebels and the brain. No ads.
+**Promotional text (iOS, 170):** New stories are on the way. Crack five coded chapters, learn a true story, and keep the life lesson at the end.
+**Short description (Play, 80):** True stories of inventors, explorers and heroes, told in secret code. No ads. (79)
 
 **Description:**
 Crack the code, learn the story.
 
-Decoded turns real history and real science into cryptogram puzzles. Every story is told in five coded chapters. Swap the letters back, and each solved chapter reveals the next part of the story, until you reach the life lesson at the end.
-
-• Builders & inventors: Benjamin Franklin, the Wright brothers, Marie Curie, Walt Disney and more
-• Female founders: from Madam C. J. Walker to Sara Blakely
-• People power: the Singing Revolution, the Salt March, the Montgomery Bus Boycott, Iceland's day off
-• Your brain & ADHD: dopamine, sleep, and what neuroscience has found
+Decoded turns real history and real science into cryptogram puzzles. Every story is told in five short coded chapters. Swap the letters back, and each solved chapter reveals what happened next, until you reach the life lesson at the end.
 
 Who is the story about? You find out when you crack the first chapter.
 
+49 true stories in 9 collections, with more on the way:
+• Builders & inventors: from Benjamin Franklin to the Wright brothers
+• Female founders who started with almost nothing
+• People power: the Singing Revolution, the Salt March and more
+• Your brain & ADHD: what neuroscience has found
+• Science & discovery, explorers & survival, music & art, sport & grit, everyday heroes
+
+How it plays:
 • Tap a letter, type your guess, and every matching letter fills in
+• Easy, Normal or Hard: from a relaxed read to a real code-breaking challenge
 • Hints and a mistake check when you are stuck
-• No timer, no pressure, no ads
-• 5 stories free. Unlock every story, including new ones, with one payment. No subscription.
+• No timer, no pressure, no ads, no account, no data collected
+
+Free stories to start. Unlock every story, including new ones, with one payment. No subscription.
 
 From the makers of Mischief & Motive.
 
-**Keywords (iOS, 100):** cryptogram,cipher,word puzzle,history,biography,brain,adhd,founders,quotes,decode,logic,trivia
+**Keywords (iOS, 100):** cryptogram,cipher,word puzzle,history,biography,brain,adhd,inventors,explorers,decode,logic,trivia
 
-**Category:** Games → Word (secondary: Puzzle)
+**Category:** Games → Word (secondary: Puzzle). Play: Game → Word.
+**Age rating:** 4+ / Everyone (no objectionable content; historical events in plain words).
+**App Privacy:** Data Not Collected.
+**Support URL:** https://sildpartners.com/apps/riddle-ruckus/
+**Privacy URL:** https://sildpartners.com/apps/riddle-ruckus/privacy.html
+**Copyright:** 2026 Sild Growth OÜ
+
+## Screenshots (made 2026-11-22)
+- iPhone 6.9": screenshots/iphone-6.9-1..5.png (1320x2868)
+- Google Play phone: google-play/phone-1..5.png (1080x2160), icon google-play/icon-512.png, feature graphic google-play/feature-graphic.png (1024x500)
+
+## App Review notes (paste into App Store Connect → App Review Information → Notes)
+Decoded is a cryptogram word puzzle game. Each true story has five chapters, and each chapter is a letter-substitution cipher. Tap a letter in the puzzle, then type the letter you think it stands for.
+
+How to test:
+1. Open the app and tap the "Start here" card. Benjamin Franklin is free.
+2. Solve a chapter, or tap Hint several times to fill letters. The next chapter opens when a chapter is solved.
+3. Five stories are free. All other stories show a lock.
+4. In-app purchase: tap any locked story, then "Unlock all stories" and "Unlock all". This is a one-time non-consumable purchase (ee.silgrowth.riddleruckus.allstories). "Restore purchase" is on the same screen.
+
+The app has no accounts, no ads, no analytics and no network calls besides the App Store purchase. Progress is saved only on the device.
