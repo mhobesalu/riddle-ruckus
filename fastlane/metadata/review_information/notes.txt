@@ -1,0 +1,9 @@
+Decoded is a cryptogram word puzzle game. Each true story has five chapters, and each chapter is a letter-substitution cipher. Tap a letter in the puzzle, then type the letter you think it stands for.
+
+How to test:
+1. Open the app and tap the "Start here" card. Benjamin Franklin is free.
+2. Solve a chapter, or tap Hint several times to fill letters. The next chapter opens when a chapter is solved.
+3. Five stories are free. All other stories show a lock.
+4. In-app purchase: tap any locked story, then "Unlock all stories" and "Unlock all". This is a one-time non-consumable purchase (ee.silgrowth.riddleruckus.allstories). "Restore purchase" is on the same screen.
+
+The app has no accounts, no ads, no analytics and no network calls besides the App Store purchase. Progress is saved only on the device.
