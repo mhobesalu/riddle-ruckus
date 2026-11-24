@@ -2,7 +2,8 @@
 # Run it from GitHub: Actions → "Android release" → Run workflow.
 # Needs these repository secrets:
 #   ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD
-# Optional, for automatic upload to the internal testing track (after the first manual upload):
+# Optional, for automatic upload to Google Play as a DRAFT Production release
+# (someone still presses "Send for review" in Play Console):
 #   PLAY_SERVICE_ACCOUNT_JSON   JSON key of a Google Cloud service account invited in Play Console
 name: Android release
 on:
@@ -12,6 +13,10 @@ on:
         description: 'Version shown in Google Play (e.g. 1.0, 1.1)'
         required: true
         default: '1.0'
+      notes:
+        description: "What's new (English, shown in Google Play)"
+        required: false
+        default: ''
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -55,12 +60,21 @@ jobs:
         with:
           name: riddle-ruckus-${{ github.event.inputs.version }}-${{ github.run_number }}
           path: native/android/app/build/outputs/bundle/release/app-release.aab
-      - name: Upload to Google Play (internal testing)
+      - name: Write release notes
+        if: env.HAS_PLAY_KEY == 'true' && github.event.inputs.notes != ''
+        env:
+          NOTES: ${{ github.event.inputs.notes }}
+        run: |
+          mkdir -p whatsnew
+          printf '%s' "$NOTES" > whatsnew/whatsnew-en-US
+      - name: Upload to Google Play (draft Production release)
         if: env.HAS_PLAY_KEY == 'true'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: ee.silgrowth.riddleruckus
           releaseFiles: native/android/app/build/outputs/bundle/release/app-release.aab
-          track: internal
-          status: completed
+          track: production
+          status: draft
+          releaseName: ${{ github.run_number }} (${{ github.event.inputs.version }})
+          whatsNewDirectory: ${{ github.event.inputs.notes != '' && 'whatsnew' || '' }}
