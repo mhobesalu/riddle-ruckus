@@ -26,7 +26,7 @@
 - App Privacy: **Data Not Collected** (no analytics, no accounts, progress stays on the phone).
 - Age rating: no objectionable content. Stories mention historical events (arrests, a shipwreck) only in plain words → 4+ / Everyone. Medical/health info: none (the brain stories are general science, not advice).
 
-## Listing text (updated 2026-11-22: 100 stories, 9 categories; no living people's names in the listing)
+## Listing text (updated 2026-11-26: 114 stories, 9 categories; no living people's names in the listing)
 **Name:** Decoded: True Stories (21)
 **Subtitle (iOS, 30):** Learn by cracking codes (23)
 **Promotional text (iOS, 170):** New stories are on the way. Crack five coded chapters, learn a true story, and keep the life lesson at the end.
@@ -39,7 +39,7 @@ Decoded turns real history and real science into cryptogram puzzles. Every story
 
 Who is the story about? You find out when you crack the first chapter.
 
-100 true stories in 9 collections, with more on the way:
+114 true stories in 9 collections, with more on the way:
 • Builders & inventors: from Benjamin Franklin to the Wright brothers
 • Female founders who started with almost nothing
 • People power: the Singing Revolution, the Salt March and more
